@@ -6,16 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Kyslik\ColumnSortable\Sortable;
 
-class Brand extends Model
+class Type extends Model
 {
-    use Sortable;
-
+    use HasFactory, Sortable;
     public $sortable = [
         'id',
         'name',
         'name_ar',
         'sortOrder',
     ];
-    protected $fillable = ['name', 'name_ar', 'sortOrder', 'image'];
-    use HasFactory;
+    protected $fillable = ['specifications', 'name', 'name_ar', 'sortOrder',];
 }

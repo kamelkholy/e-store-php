@@ -36,11 +36,11 @@
         });
     </script>
     <nav id="topbar" class="navbar navbar-expand-lg navbar-light bg-light">
-        <button type="button" id="sidebarCollapse" class="btn-sm btn-info">
+        <button type="button" id="sidebarCollapse" class="btn-sm btn-info mx-2">
             <i class="fas fa-align-left"></i>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class=" navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
                     <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
@@ -48,40 +48,32 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/store">Store</a>
                 </li>
-
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#">Disabled</a>
-                </li>
             </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
         </div>
     </nav>
     <div class="wrapper">
         <!-- Sidebar -->
         <nav id="sidebar">
             <div class="sidebar-header">
-                <h4>Store Management</h4>
+                <h4>Store Name</h4>
             </div>
 
             <ul class="list-unstyled components">
-                <p>Admin Portal</p>
-                <li class="active">
-                    <a href="#">Dashboard</a>
+                <p>Management</p>
+                <li class="{{ request()->routeIs('dashboard') ? 'active' : ''  }}">
+                    <a href="{{url('/admin')}}">Dashboard</a>
                 </li>
                 <li>
                     <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Modules</a>
                     <ul class="collapse list-unstyled" id="homeSubmenu">
-                        <li>
-                            <a href="{{url('/categories')}}">Categories</a>
+                        <li class="{{ request()->routeIs('categories.index') ? 'active' : ''  }}">
+                            <a href=" {{url('/categories')}}">Categories</a>
                         </li>
-                        <li>
-                            <a href="#">Types</a>
+                        <li class="{{ request()->routeIs('types.index') ? 'active' : ''  }}">
+                            <a href="{{url('/types')}}">Types</a>
                         </li>
-                        <li>
-                            <a href="{{url('/brands')}}">Brands</a>
+                        <li class="{{ request()->routeIs('brands.index') ? 'active' : ''  }}">
+                            <a href=" {{url('/brands')}}">Brands</a>
                         </li>
                     </ul>
                 </li>
@@ -105,7 +97,7 @@
         </nav>
 
         <!-- Page Content -->
-        <div id="content">
+        <div id="content" class="container">
 
             @yield('main')
 

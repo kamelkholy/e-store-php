@@ -5,11 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Kyslik\ColumnSortable\Sortable;
 
 class Category extends Model
 {
-    protected $fillable = ['name', 'sortOrder', 'image', 'show_image', 'level', 'parent'];
-    use HasFactory;
+    use HasFactory, Sortable;
+    public $sortable = [
+        'id',
+        'name',
+        'name_ar',
+        'sortOrder',
+    ];
+    protected $fillable = ['name', 'name_ar', 'sortOrder', 'image', 'show_image', 'level', 'parent'];
     public function getCategoryWithParent($id)
     {
         $category = DB::table('categories as c1')

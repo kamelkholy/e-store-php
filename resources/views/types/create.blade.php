@@ -23,11 +23,11 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Add Category</h3>
+                <h3 class="panel-title">Add Type</h3>
             </div>
             <div class="panel-body">
                 <br />
-                <form method="post" action="{{ route('categories.store') }}" enctype="multipart/form-data">
+                <form method="post" action="{{ route('types.store') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <div class="row">
@@ -41,7 +41,7 @@
                         <div class="row">
                             <label class="col-md-2" align="right">Arabic Name</label>
                             <div class="col-md-4">
-                                <input type="text" name="ar-name" class="form-control" required />
+                                <input type="text" name="name_ar" class="form-control" required />
                             </div>
                         </div>
                     </div>
@@ -50,28 +50,6 @@
                             <label class="col-md-2" align="right">Sort Order</label>
                             <div class="col-md-4">
                                 <input type="text" name="sortOrder" class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-2" align="right">Parent</label>
-                            <div class="col-md-4">
-                                <select name="parent" class="custom-select">
-                                    <option value="NULL" selected>Select Parent</option>
-                                    @foreach($cats as $cat)
-                                    <option value="{{$cat->id}}">{{$cat->name}}</option>
-                                    @endforeach
-
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-2" align="right">Upload Image</label>
-                            <div class="col-md-4">
-                                <input type="file" name="image" required />
                             </div>
                         </div>
                     </div>

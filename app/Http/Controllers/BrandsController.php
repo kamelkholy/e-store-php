@@ -16,7 +16,7 @@ class BrandsController extends Controller
      */
     function index()
     {
-        $data = Brand::all();
+        $data = Brand::sortable()->paginate(10)->withQueryString();
         return view('brands.list', compact('data'));
     }
 

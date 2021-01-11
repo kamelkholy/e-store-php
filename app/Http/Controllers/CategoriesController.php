@@ -19,7 +19,7 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $data = Category::all();
+        $data = Category::sortable()->paginate(10)->withQueryString();
         return view('categories.list', compact('data'));
     }
     public function getForStore()
@@ -55,13 +55,17 @@ class CategoriesController extends Controller
     {
         $request->validate([
             'name'  => 'required',
+            'name_ar'  => 'required',
             'sortOrder'  => 'integer|nullable',
             'image' => 'image|max:2048'
         ]);
         $form_data = array(
             'name'  => $request->name,
-            'sortOrder' => $request->sortOrder,
+            'name_ar'  => $request->name_ar,
         );
+        if (isset($request->sortOrder)) {
+            $form_data['sortOrder'] = $request->sortOrder;
+        }
         if (isset($request->image)) {
             $image_file = $request->image;
             $image = Image::make($image_file);
@@ -167,12 +171,16 @@ class CategoriesController extends Controller
     {
         $request->validate([
             'name'  => 'required',
+            'name_ar'  => 'required',
             'sortOrder'  => 'integer|nullable',
             'image' => 'image|max:2048'
         ]);
         $category = Category::findOrFail($id);
         $category->name = $request->name;
-        $category->sortOrder = $request->sortOrder;
+        $category->name_ar = $request->name_ar;
+        if (isset($request->sortOrder)) {
+            $category->sortOrder = $request->sortOrder;
+        }
 
         if (isset($request->image)) {
             $image_file = $request->image;
