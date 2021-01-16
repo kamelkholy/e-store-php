@@ -6,14 +6,14 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Brands</h3>
+                <h3 class="panel-title">Tags</h3>
             </div>
             <div class="panel-body">
                 <div class="container">
 
                     <div class="row py-2">
                         <div class="col pl-0">
-                            <a href="{{route('brands.create')}}" class="btn btn-primary"> Add New</a>
+                            <a href="{{route('tags.create')}}" class="btn btn-primary"> Add New</a>
                         </div>
                         <form class="form-inline my-2 my-lg-0">
                             <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -40,7 +40,6 @@
                     <table class="table table-hover table-sm">
                         <thead class="text-center text-white" style="background-color: #A7B2DF;">
                             <tr>
-                                <th>Image</th>
                                 <th>@sortablelink('name', 'Name')</th>
                                 <th>@sortablelink('name_ar', 'Name (Arabic)')</th>
                                 <th>@sortablelink('sortOrder', 'Sort Order')</th>
@@ -50,26 +49,19 @@
                         <tbody class="text-center">
                             @if ($data->count() == 0)
                             <tr>
-                                <td colspan="5">No Data to display.</td>
+                                <td colspan="4">No Data to display.</td>
                             </tr>
                             @endif
                             @foreach($data as $row)
                             <tr>
-                                <td class="align-middle">
-                                    @if(isset($row->image))
-                                    <img src="{{route('brands.show', [$row->id])}}" class="img-thumbnail" width="75" />
-                                    @else
-                                    <img src="{{asset('img/placeholder.png')}}" class="img-thumbnail" width="75" />
-                                    @endif
-                                </td>
                                 <td class="align-middle">{{ $row->name }}</td>
                                 <td class="align-middle">{{ $row->name_ar }}</td>
                                 <td class="align-middle">{{ $row->sortOrder }}</td>
                                 <td class="align-middle">
-                                    <form action="{{route('brands.destroy', [$row->id])}}" method="POST">
+                                    <form action="{{route('tags.destroy', [$row->id])}}" method="POST">
                                         @csrf
                                         {{ method_field('DELETE') }}
-                                        <a href="{{route('brands.edit', [$row->id])}}" class="btn-sm btn-secondary" style="padding: .5rem .5rem;"><i class="fa fa-edit"></i></a>
+                                        <a href="{{route('tags.edit', [$row->id])}}" class="btn-sm btn-secondary" style="padding: .5rem .5rem;"><i class="fa fa-edit"></i></a>
                                         <button type="submit" class="btn-sm btn-danger" style="cursor: pointer;"><i class="fa fa-trash"></i></button>
                                     </form>
                                 </td>

@@ -41,7 +41,8 @@ class BrandsController extends Controller
     {
         $request->validate([
             'name'  => 'required',
-            'sortOrder'  => 'integer',
+            'name_ar'  => 'required',
+            'sortOrder'  => 'integer|nullable',
             'image' => 'required|image|max:2048'
         ]);
 
@@ -52,19 +53,13 @@ class BrandsController extends Controller
         Response::make($image->encode('jpeg'));
         $form_data = array(
             'name'  => $request->name,
+            'name_ar'  => $request->name_ar,
             'image' => $image,
-            'sortOrder' => $request->sortOrder,
         );
-        // dd($form_data);
-        try {
-            Brand::create($form_data);
-        } catch (\Illuminate\Database\QueryException $exception) {
-            // You can check get the details of the error using `errorInfo`:
-            $errorInfo = $exception->errorInfo;
-            dd($errorInfo);
-            // Return the response to the client..
+        if (isset($request->sortOrder)) {
+            $form_data['sortOrder'] = $request->sortOrder;
         }
-
+        Brand::create($form_data);
         return redirect()->back()->with('success', 'Brand Created Successfully');
     }
 
@@ -76,17 +71,10 @@ class BrandsController extends Controller
      */
     public function show($id)
     {
-        try {
-            $image = Brand::findOrFail($id);
-
-            $image_file = Image::make($image->image);
-
-            $response = Response::make($image_file->encode('jpeg'));
-
-            $response->header('Content-Type', 'image/jpeg');
-        } catch (\Exception $e) {
-            dd($e);
-        }
+        $image = Brand::findOrFail($id);
+        $image_file = Image::make($image->image);
+        $response = Response::make($image_file->encode('jpeg'));
+        $response->header('Content-Type', 'image/jpeg');
         return $response;
     }
 
@@ -98,7 +86,7 @@ class BrandsController extends Controller
      */
     public function edit($id)
     {
-        $data = Brand::where('id', $id)->orderBy('sortOrder')->get();;
+        $data = Brand::findOrFail($id);
         return view('brands.edit', compact('data'));
     }
 
@@ -111,30 +99,25 @@ class BrandsController extends Controller
      */
     public function update(Request $request, $id)
     {
-
-        $brand = Brand::find($id);
+        $request->validate([
+            'name'  => 'required',
+            'name_ar'  => 'required',
+            'sortOrder'  => 'integer|nullable',
+            'image' => 'required|image|max:2048'
+        ]);
+        $brand = Brand::findOrFail($id);
         $brand->name = $request->name;
+        $brand->name_ar = $request->name_ar;
         $brand->sortOrder = $request->sortOrder;
 
         if (isset($request->image)) {
-
             $image_file = $request->image;
-
             $image = Image::make($image_file);
-
             Response::make($image->encode('jpeg'));
             $brand->image = $image;
         }
 
-        try {
-            $brand->save();
-        } catch (\Illuminate\Database\QueryException $exception) {
-            // You can check get the details of the error using `errorInfo`:
-            $errorInfo = $exception->errorInfo;
-            dd($errorInfo);
-            // Return the response to the client..
-        }
-
+        $brand->save();
         return redirect('/brands')->with('success', 'Brand Updated Successfully');
     }
 
@@ -146,7 +129,7 @@ class BrandsController extends Controller
      */
     public function destroy($id)
     {
-        $brand = Brand::find($id);
+        $brand = Brand::findOrFail($id);
 
         $brand->delete();
         return redirect('/brands')->with('success', 'Brand Updated Successfully');

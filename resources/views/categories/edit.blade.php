@@ -39,9 +39,9 @@
                 </div>
                 <div class="form-group">
                     <div class="row">
-                        <label class="col-md-2" align="right">Arabic Name</label>
+                        <label class="col-md-2" align="right">Name (Arabic)</label>
                         <div class="col-md-4">
-                            <input type="text" name="ar-name" class="form-control" required />
+                            <input type="text" name="name_ar" class="form-control" required />
                         </div>
                     </div>
                 </div>

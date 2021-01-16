@@ -25,15 +25,22 @@
         </div>
         <div class="panel-body">
             <br />
-            @foreach($data as $element)
-            <form method="post" action="{{ route('brands.update', [$element->id]) }}" enctype="multipart/form-data">
+            <form method="post" action="{{ route('brands.update', [$data->id]) }}" enctype="multipart/form-data">
                 @csrf
                 {{ method_field('PUT') }}
                 <div class="form-group">
                     <div class="row">
                         <label class="col-md-2" align="right">Name</label>
                         <div class="col-md-4">
-                            <input type="text" name="name" value="{{$element->name}}" class="form-control" required />
+                            <input type="text" name="name" value="{{$data->name}}" class="form-control" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-md-2" align="right">Name (Arabic)</label>
+                        <div class="col-md-4">
+                            <input type="text" name="name_ar" value="{{$data->name_ar}}" class="form-control" required />
                         </div>
                     </div>
                 </div>
@@ -41,7 +48,7 @@
                     <div class="row">
                         <label class="col-md-2" align="right">Sort Order</label>
                         <div class="col-md-4">
-                            <input type="text" name="sortOrder" value="{{$element->sortOrder}}" class="form-control" />
+                            <input type="text" name="sortOrder" value="{{$data->sortOrder}}" class="form-control" />
                         </div>
                     </div>
                 </div>
@@ -57,7 +64,6 @@
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </form>
-            @endforeach
         </div>
     </div>
 

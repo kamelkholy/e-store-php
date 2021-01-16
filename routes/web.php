@@ -23,5 +23,7 @@ Route::get('/store', ['App\Http\Controllers\StoreController', 'index']);
 Route::get('/store-categories', ['App\Http\Controllers\CategoriesController', 'getForStore']);
 
 Route::resource('brands', 'App\Http\Controllers\BrandsController');
+Route::resource('tags', 'App\Http\Controllers\TagsController');
+Route::resource('products', 'App\Http\Controllers\ProductsController');
 Route::resource('categories', 'App\Http\Controllers\CategoriesController');
 Route::resource('types', 'App\Http\Controllers\TypeController');

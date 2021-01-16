@@ -41,6 +41,7 @@
                             <tr>
                                 <th>Image</th>
                                 <th>@sortablelink('name', 'Name')</th>
+                                <th>@sortablelink('name_ar', 'Name (Arabic)')</th>
                                 <th>@sortablelink('sortOrder', 'Sort Order')</th>
                                 <th>Actions</th>
                             </tr>
@@ -48,7 +49,7 @@
                         <tbody class="text-center">
                             @if ($data->count() == 0)
                             <tr>
-                                <td colspan="4">No Data to display.</td>
+                                <td colspan="5">No Data to display.</td>
                             </tr>
                             @endif
                             @foreach($data as $row)
@@ -61,6 +62,7 @@
                                     @endif
                                 </td>
                                 <td class="align-middle">{{ $row->name }}</td>
+                                <td class="align-middle">{{ $row->name_ar }}</td>
                                 <td class="align-middle">{{ $row->sortOrder }}</td>
                                 <td class="align-middle">
                                     <form action="{{route('categories.destroy', [$row->id])}}" method="POST">

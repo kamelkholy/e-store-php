@@ -3,23 +3,21 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Type;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Exceptions\CategoryHasChildrenException;
+use App\Models\Tag;
 
-
-class TypeController extends Controller
+class TagsController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    function index()
     {
-        $data = Type::sortable()->paginate(10)->withQueryString();
-        return view('types.list', compact('data'));
+        $data = Tag::sortable()->paginate(10)->withQueryString();
+        return view('tags.list', compact('data'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -28,8 +26,7 @@ class TypeController extends Controller
      */
     public function create()
     {
-        $cats = Type::all();
-        return view('types.create', compact('cats'));
+        return view('tags.create');
     }
 
     /**
@@ -43,23 +40,18 @@ class TypeController extends Controller
         $request->validate([
             'name'  => 'required',
             'name_ar'  => 'required',
-            'specifications'  => 'required',
-            'specifications.*.title'  => 'required',
-            'specifications.*.type'  => 'required',
-            'specifications.*.values'  => 'required',
             'sortOrder'  => 'integer|nullable',
         ]);
+
         $form_data = array(
             'name'  => $request->name,
             'name_ar'  => $request->name_ar,
-            'specifications'  => json_encode($request->specifications),
         );
         if (isset($request->sortOrder)) {
             $form_data['sortOrder'] = $request->sortOrder;
         }
-
-        $cat = Type::create($form_data);
-        return redirect()->back()->with('success', 'Type Created Successfully');
+        Tag::create($form_data);
+        return redirect()->back()->with('success', 'Tag Created Successfully');
     }
 
     /**
@@ -81,9 +73,8 @@ class TypeController extends Controller
      */
     public function edit($id)
     {
-        $data = Type::findOrFail($id);
-        $data->specifications = json_decode($data->specifications);
-        return view('types.edit', compact('data'));
+        $data = Tag::findOrFail($id);
+        return view('tags.edit', compact('data'));
     }
 
     /**
@@ -98,22 +89,16 @@ class TypeController extends Controller
         $request->validate([
             'name'  => 'required',
             'name_ar'  => 'required',
-            'specifications'  => 'required',
-            'specifications.*.title'  => 'required',
-            'specifications.*.type'  => 'required',
-            'specifications.*.values'  => 'required',
             'sortOrder'  => 'integer|nullable',
         ]);
-        $type = Type::findOrFail($id);
-        $type->name = $request->name;
-        $type->name_ar = $request->name_ar;
-        $type->specifications = json_encode($request->specifications);
-
+        $tag = Tag::findOrFail($id);
+        $tag->name = $request->name;
+        $tag->name_ar = $request->name_ar;
         if (isset($request->sortOrder)) {
-            $type->sortOrder = $request->sortOrder;
+            $tag->sortOrder = $request->sortOrder;
         }
-        $type->save();
-        return redirect('/types')->with('success', 'Type Updated Successfully');
+        $tag->save();
+        return redirect('/tags')->with('success', 'Tag Updated Successfully');
     }
 
     /**
@@ -124,8 +109,8 @@ class TypeController extends Controller
      */
     public function destroy($id)
     {
-        $type = Type::findOrFail($id);
-        $type->delete();
-        return redirect('/types')->with('success', 'Type Deleted Successfully');
+        $tag = Tag::findOrFail($id);
+        $tag->delete();
+        return redirect('/tags')->with('success', 'Tag Updated Successfully');
     }
 }

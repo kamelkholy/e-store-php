@@ -20,6 +20,22 @@ class CategoriesController extends Controller
     public function index()
     {
         $data = Category::sortable()->paginate(10)->withQueryString();
+        $links = new CategoriesLinker();
+        $categoriesNames = [];
+        $links = $links->getAll();
+        foreach ($links as $key => $value) {
+            if (!isset($categoriesNames[$value->id])) {
+                $categoriesNames[$value->id] = $value->name;
+            }
+            $parentToName = $value->parent;
+            for ($i = 0; $i < $value->level; $i++) {
+                $index = array_search($parentToName, array_column($data->toArray(), 'id'));
+                $parent = $data[$index];
+
+                $parentToName = $parent->parent;
+                $categoriesNames[$value->id] = $parent->name . ' > ' . $categoriesNames[$value->id];
+            }
+        }
         return view('categories.list', compact('data'));
     }
     public function getForStore()
