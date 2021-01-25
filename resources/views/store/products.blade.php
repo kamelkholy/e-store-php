@@ -458,14 +458,14 @@
             let cartHtml = '';
             for (let i in cart) {
                 product = cart[i];
-                itemTotal += (cart[i].price) ? cart[i].price : 0;
+                itemTotal += (cart[i].price) ? Number(cart[i].price) : 0;
                 let imageUrl = '{{ route("store.product.image", ":id") }}';
                 imageUrl = imageUrl.replace(':id', product.imageId);
                 cartHtml += `
                             <li class="clearfix">
                                 <img src="${imageUrl}" alt="" />
                                 <span class="item-name">${product.name}</span>
-                                <span class="item-price">${isNaN(product.price)?product.price:product.price.toFixed(2)}</span>
+                                <span class="item-price">${isNaN(product.price)?product.price:product.price}</span>
                                 <span class="item-quantity">Quantity: ${product.quantity}</span>
                             </li>`;
             }
