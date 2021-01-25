@@ -45,11 +45,8 @@ class BrandsController extends Controller
             'sortOrder'  => 'integer|nullable',
             'image' => 'required|image|max:2048'
         ]);
-
         $image_file = $request->image;
-
         $image = Image::make($image_file);
-
         Response::make($image->encode('jpeg'));
         $form_data = array(
             'name'  => $request->name,
@@ -59,7 +56,13 @@ class BrandsController extends Controller
         if (isset($request->sortOrder)) {
             $form_data['sortOrder'] = $request->sortOrder;
         }
-        Brand::create($form_data);
+        try {
+            //code...
+            Brand::create($form_data);
+        } catch (\Throwable $th) {
+            dd($th);
+            //throw $th;
+        }
         return redirect()->back()->with('success', 'Brand Created Successfully');
     }
 

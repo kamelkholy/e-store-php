@@ -8,17 +8,16 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <link rel="stylesheet" href="{{asset('css/owl.theme.default.min.css')}}">
     <link rel="stylesheet" href="{{asset('css/owl.carousel.min.css')}}">
-    <!-- <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" /> -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
     <link rel="stylesheet" href="{{asset('css/smoothproducts.css')}}">
-    <!-- <link rel="stylesheet" href="singleProduct.css"> -->
     <link rel="stylesheet" href="{{asset('css/style2.css')}}">
     <link rel="stylesheet" href="{{asset('css/media-query.css')}}">
 
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+    <script src=" //cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js "></script>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 </head>
@@ -59,71 +58,43 @@
         <div class="container " style="display: flex;
         flex-flow: row;">
 
-            <a class="navbar-brand" href="#">C<span>N</span>T</a>
+            <a class="navbar-brand" href="{{route('store')}}">C<span>N</span>T</a>
 
 
             <div class=" navbar-collapse">
                 <div class="m-auto centered">
-                    <input id="searchbox" name="searchbox" placeholder="Search term">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">بحث</button>
+                    <form action="{{route('store.products')}}">
+                        <input id="search" name="search" placeholder="Search term">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">بحث</button>
+                    </form>
                 </div>
             </div>
 
             <div class="form-inline my-2">
+                <a style="width: 20px; margin-left: 25px;" href="{{route('store.compare')}}">
+                    <i style="color: white;" class="fas fa-exchange-alt"></i>
+                </a>
                 <a href="#" id="cart">
-                    <img src="img/shopping-cart.png" style="width: 20px; margin-left: 25px;" alt="">
-                    <span class="badge">16</span>
+                    <img src="{{asset('img/shopping-cart.png')}}" style="width: 20px; margin-left: 25px;" alt="">
+                    <span id="cart-count" class="badge">0</span>
                 </a>
                 <a href="#">
-                    <img src="img/support.png" style="width: 25px;" alt="">
-
+                    <img src="{{asset('img/support.png')}}" style="width: 25px;" alt="">
                 </a>
 
                 <div class="navbar-right">
-                    <!-- <a href="#" id="cart" style="color: #fff;">
-                        <i class="fa fa-shopping-cart " style="color:#fff"></i>
-                         Cart <span class="badge">16</span>
-                        
-                        </a> -->
-
 
                     <div class="shopping-cart">
                         <div class="shopping-cart-header">
                             <i class="fa fa-shopping-cart cart-icon"></i>
                             <div class="shopping-cart-total">
                                 <span class="lighter-text">Total:</span>
-                                <span class="main-color-text total">$461.15</span>
+                                <span id="cart-items-total" class="main-color-text total">$461.15</span>
                             </div>
                         </div>
-                        <!--end shopping-cart-header -->
-
-                        <ul class="shopping-cart-items">
-                            <li class="clearfix">
-                                <img src="img/labtop section/tab one/1.png" alt="item1" />
-                                <span class="item-name">XMREDTREE</span>
-                                <span class="item-detail">Pack 100</span>
-                                <span class="item-price">$49.50</span>
-                                <span class="item-quantity">Quantity: 01</span>
-                            </li>
-
-                            <li class="clearfix">
-                                <img src="img/labtop section/tab one/2.png" alt="item1" />
-                                <span class="item-name">XMWHREIN</span>
-                                <span class="item-detail">Pack 100</span>
-                                <span class="item-price">$34.06</span>
-                                <span class="item-quantity">Quantity: 10</span>
-                            </li>
-
-                            <li class="clearfix">
-                                <img src="img/labtop section/tab one/3.png" alt="item1" />
-                                <span class="item-name">XMJBRR</span>
-                                <span class="item-detail">Pack 25</span>
-                                <span class="item-price">$14.21</span>
-                                <span class="item-quantity">Quantity: 5</span>
-                            </li>
+                        <ul id="cart-items" class="shopping-cart-items">
                         </ul>
-
-                        <a href="#" class="button"> أطلب الأن</a>
+                        <a href="{{route('store.cart')}}" class="button"> عرض الكل</a>
                     </div>
                     <!--end shopping-cart -->
                 </div>
@@ -144,16 +115,16 @@
                             <ul class="">
                                 <!-- <li><a href="#">الرئيسية</a></li> -->
                                 @foreach($parents as $parent)
-                                <li><a href="#">{{$parent->name}}</a>
+                                <li><a href="{{route('store.products.category', $parent->id)}}">{{$parent->name}}</a>
                                     @if($children->contains('parent', $parent->id))
                                     <ul class="four-column sub-category">
                                         @foreach($children as $lv1)
                                         @if($lv1->parent == $parent->id && $lv1->level == 1)
-                                        <li><a href="#">{{$lv1->name}}</a>
+                                        <li><a href="{{route('store.products.category', $lv1->id)}}">{{$lv1->name}}</a>
                                             <ul>
                                                 @foreach($children as $lv2)
                                                 @if($lv2->parent == $lv1->id && $lv2->level == 2)
-                                                <li><a href="#">{{$lv2->name}} </a></li>
+                                                <li><a href="{{route('store.products.category', $lv2->id)}}">{{$lv2->name}} </a></li>
                                                 @endif
                                                 @endforeach
                                             </ul>
@@ -354,7 +325,8 @@
                         <div class="col-md-8">
                             <div class="item-content">
                                 <h4>
-                                    <a href="" title="ut labore et do">ut labore et do</a></h4>
+                                    <a href="" title="ut labore et do">ut labore et do</a>
+                                </h4>
                                 Price
                                 <div class="item-price">
                                     <span class="item-price2 d-flex align-items-center">
@@ -2242,11 +2214,11 @@
     <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="js/jquery-2.1.3.min.js"></script>
-
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/singleProduct.js"></script>
-    <script type="text/javascript" src="js/smoothproducts.min.js"></script>
+    <script type="text/javascript" src="{{asset('js/jquery-2.1.3.min.js')}}"></script>
+    <script src="{{asset('js/app.js')}}"></script>
+    <script src="{{asset('js/owl.carousel.min.js')}}"></script>
+    <script src="{{asset('js/singleProduct.js')}}"></script>
+    <script type="text/javascript" src="{{asset('js/smoothproducts.min.js')}}"></script>
 
     <script type="text/javascript">
         /* wait for images to load */
@@ -2263,8 +2235,34 @@
                 element.className = 'sub-category ' + numbers[element.childElementCount] + '-column';
             }
         });
+        $(document).ready(function() {
+            renderCart();
+        });
+
+        function renderCart() {
+            let cart = localStorage.getItem('cart');
+            cart = cart ? JSON.parse(cart) : {};
+            $('#cart-count').html(Object.keys(cart).length)
+            let itemTotal = 0;
+            let cartHtml = '';
+            for (let i in cart) {
+                product = cart[i];
+                itemTotal += (cart[i].price) ? cart[i].price : 0;
+                let imageUrl = '{{ route("store.product.image", ":id") }}';
+                imageUrl = imageUrl.replace(':id', product.imageId);
+                cartHtml += `
+                            <li class="clearfix">
+                                <img src="${imageUrl}" alt="" />
+                                <span class="item-name">${product.name}</span>
+                                <span class="item-price">${isNaN(product.price)?product.price:product.price.toFixed(2)}</span>
+                                <span class="item-quantity">Quantity: ${product.quantity}</span>
+                            </li>`;
+            }
+            $('#cart-items-total').html(itemTotal);
+            $('#cart-items').html(cartHtml);
+        }
     </Script>
-    <script src="js/script.js"></script>
+    <script src="{{asset('js/script.js')}}"></script>
 </body>
 
 </html>

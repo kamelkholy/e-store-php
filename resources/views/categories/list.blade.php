@@ -61,7 +61,13 @@
                                     <img src="{{asset('img/placeholder.png')}}" class="img-thumbnail" width="75" />
                                     @endif
                                 </td>
-                                <td class="align-middle">{{ $row->name }}</td>
+                                <td class="align-middle">
+                                    @if($row->level == 0)
+                                    {{$row->name}}
+                                    @else
+                                    {{ $categoriesNames[$row->id] }}
+                                    @endif
+                                </td>
                                 <td class="align-middle">{{ $row->name_ar }}</td>
                                 <td class="align-middle">{{ $row->sortOrder }}</td>
                                 <td class="align-middle">

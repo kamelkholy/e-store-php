@@ -19,6 +19,17 @@ class CategoriesLinker extends Model
         //do whatever you want to do
         return $children;
     }
+    public function getCateoryChildren($id)
+    {
+        $children = DB::table('categories_linkers as c1')
+            ->join('categories as c2', 'c1.categoryId', '=', 'c2.id')
+            ->where('c2.id', '=', $id)
+            ->orderBy('c2.sortOrder')
+            ->select('c1.*', 'c2.id as id', 'c2.name as name')
+            ->get();
+        //do whatever you want to do
+        return $children;
+    }
     public function getAll()
     {
         $children = DB::table('categories_linkers as c1')

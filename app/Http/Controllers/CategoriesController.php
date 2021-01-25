@@ -29,14 +29,14 @@ class CategoriesController extends Controller
             }
             $parentToName = $value->parent;
             for ($i = 0; $i < $value->level; $i++) {
-                $index = array_search($parentToName, array_column($data->toArray(), 'id'));
+                $index = array_search($parentToName, array_column($data->toArray()['data'], 'id'));
                 $parent = $data[$index];
 
                 $parentToName = $parent->parent;
                 $categoriesNames[$value->id] = $parent->name . ' > ' . $categoriesNames[$value->id];
             }
         }
-        return view('categories.list', compact('data'));
+        return view('categories.list', ['data' => $data, 'categoriesNames' => $categoriesNames]);
     }
     public function getForStore()
     {

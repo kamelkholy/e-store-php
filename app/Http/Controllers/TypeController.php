@@ -70,7 +70,9 @@ class TypeController extends Controller
      */
     public function show($id)
     {
-        return;
+        $data = Type::findOrFail($id);
+        $data->specifications = json_decode($data->specifications);
+        return $data;
     }
 
     /**
