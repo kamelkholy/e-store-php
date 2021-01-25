@@ -21,6 +21,7 @@ Route::get('/admin', function () {
 })->name('dashboard');
 Route::get('/store', ['App\Http\Controllers\StoreController', 'index'])->name('store');
 Route::get('/store/cart', ['App\Http\Controllers\StoreController', 'cart'])->name('store.cart');
+Route::post('/store/checkout', ['App\Http\Controllers\StoreController', 'checkout'])->name('store.checkout');
 Route::get('/store/compare', ['App\Http\Controllers\StoreController', 'compare'])->name('store.compare');
 Route::post('/store/compare', ['App\Http\Controllers\StoreController', 'compareProducts'])->name('store.compareProducts');
 Route::get('store/products', ['App\Http\Controllers\StoreController', 'products'])->name('store.products');

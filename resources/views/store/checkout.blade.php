@@ -9,19 +9,19 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.6/css/intlTelInput.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 
-    <link rel="stylesheet" href="{{asset('css/style2.css')}}">
-    <link rel="stylesheet" href="{{asset('css/owl.theme.default.min.css')}}">
+
     <link rel="stylesheet" href="{{asset('css/owl.carousel.min.css')}}">
+    <link rel="stylesheet" href="{{asset('css/owl.theme.default.min.css')}}">
+    <link rel="stylesheet" href="{{asset('css/style2.css')}}">
     <link rel="stylesheet" href="{{asset('css/all-product.css')}}">
     <link rel="stylesheet" href="{{asset('css/filter.css')}}">
     <link rel="stylesheet" href="{{asset('css/smoothproducts.css')}}">
     <link rel="stylesheet" href="{{asset('css/singleProduct.css')}}">
-    <link rel="stylesheet" href="{{asset('css/compare.css')}}">
+    <link rel="stylesheet" href="{{asset('css/checkout.css')}}">
 
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 
@@ -50,6 +50,8 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#">طلب التقسيط</a>
                     </li>
+
+
                 </ul>
             </div>
         </div>
@@ -97,61 +99,155 @@
                         <a href="{{route('store.cart')}}" class="button"> عرض الكل</a>
                     </div>
                 </div>
+
             </div>
         </div>
     </nav>
-
-
-    <section class="menu-section" dir="rtl">
-        <div class="menu-container">
-            <div class="menu text-right">
-                <ul>
-                    <li><a href="{{route('store')}}">الرئيسية</a></li>
-                    @foreach($parents as $parent)
-                    <li><a href="{{route('store.products.category', $parent->id)}}">{{$parent->name}}</a>
-                        @if($children->contains('parent', $parent->id))
-                        <ul>
-                            @foreach($children as $lv1)
-                            @if($lv1->parent == $parent->id && $lv1->level == 1)
-                            <li><a href="{{route('store.products.category', $lv1->id)}}">{{$lv1->name}}</a>
-                                <ul>
-                                    @foreach($children as $lv2)
-                                    @if($lv2->parent == $lv1->id && $lv2->level == 2)
-                                    <li><a href="{{route('store.products.category', $lv2->id)}}">{{$lv2->name}} </a></li>
-                                    @endif
-                                    @endforeach
-                                </ul>
-                            </li>
-                            @endif
-                            @endforeach
-                        </ul>
-                        @endif
-                    </li>
-                    @endforeach
-                </ul>
-            </div>
-        </div>
-    </section>
-
-
-    <section style="padding-bottom: 50px; padding-top: 50px;">
-        <div class="container">
-            <div class="row" dir="rtl">
-                <div class="col-md-12">
-                    <div style="padding:0;">
-                        <div class="content__wrapper">
-                            <h2 class="text-color text-head-table">المقارنات</h2>
-                            <table class="table table-striped other-des-table text-right" style="border: 1px solid #ddd">
-                                <tbody id="specs-data">
-
-                                </tbody>
-                            </table>
+    <div class="container">
+        <h2 class="py-3 text-center">checkout </h2>
+        <div class="row">
+            <div class="col-md-4 order-md-2 mb-4">
+                <div class="checkout-price">
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted">Your cart</span>
+                        <span class="badges badge-secondary badge-pill">3</span>
+                    </h4>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <h6 class="my-0">Product name</h6>
+                                <small class="text-muted">Brief description</small>
+                            </div>
+                            <span class="text-muted">$12</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <h6 class="my-0">Second product</h6>
+                                <small class="text-muted">Brief description</small>
+                            </div>
+                            <span class="text-muted">$8</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between lh-condensed">
+                            <div>
+                                <h6 class="my-0">Third item</h6>
+                                <small class="text-muted">Brief description</small>
+                            </div>
+                            <span class="text-muted">$5</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between bg-light">
+                            <div class="text-success ">
+                                <h6 class="my-0 text-white">Promo code</h6>
+                                <small>EXAMPLECODE</small>
+                            </div>
+                            <span class="text-success">-$5</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Total (USD)</span>
+                            <strong>$20</strong>
+                        </li>
+                    </ul>
+                    <!-- <form class="card p-2">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Promo code">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-secondary">Redeem</button>
                         </div>
                     </div>
+                </form> -->
+                </div>
+            </div>
+            <div class="col-md-8 order-md-1">
+                <div class="checkout-forms">
+                    <h4 class="mb-3">Billing address</h4>
+                    <form class="needs-validation" action="https://www.google.com/webhp?rct=j" novalidate="">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName">First name</label>
+                                <input type="text" class="form-control" id="firstName" placeholder="" value="" required="">
+                                <div class="invalid-feedback"> Valid first name is required. </div>
+                            </div>
+
+
+
+                            <!-- <input id="phone" name="phone" type="tel"> -->
+
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName">Last name</label>
+                                <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
+                                <div class="invalid-feedback"> Valid last name is required. </div>
+                            </div>
+                        </div>
+                        <!-- <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="firstName">phone number</label>
+                            <input class="form-control" placeholder="" id="phone" name="phone" type="tel" value=""
+                                required="">
+                            <div class="invalid-feedback"> Valid first name is required. </div>
+                        </div>
+                    </div> -->
+                        <!-- <div class="mb-3">
+                        <label for="username">Username</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">@</span>
+                            </div>
+                            <input type="text" class="form-control" id="username" placeholder="Username" required="">
+                            <div class="invalid-feedback" style="width: 100%;"> Your username is required. </div>
+                        </div>
+                    </div> -->
+
+
+                        <div class="form-row">
+                            <div class="form-group col-12 col-sm-6 col-md-12">
+                                <label>Phone number</label>
+                                <!-- <div class="input-group input-group-sm"> -->
+                                <input id="phone" type="tel" class="form-control" pattern="^(01)([0-9]{9})$" required="">
+
+                                <!-- </div> -->
+                            </div>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <!-- <span class="text-muted">(Optional)</span> -->
+                            <label for="email">Email </label>
+                            <input type="email" class="form-control" id="email" required="" placeholder="you@example.com" pattern="^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$">
+                            <div class="invalid-feedback"> Please enter a valid email address for shipping updates.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="address">Address</label>
+                            <input type="text" class="form-control" id="address" placeholder="1234 Main St" required="">
+                            <div class="invalid-feedback"> Please enter your shipping address. </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="province">Province</label>
+                                <input type="text" class="form-control" id="province" placeholder="Province" required="">
+                                <div class="invalid-feedback"> Please select a valid province. </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="city">City</label>
+
+                                <input type="text" class="form-control" id="city" placeholder="city" required="">
+
+
+                                <div class="invalid-feedback"> Please provide a valid city. </div>
+                            </div>
+
+                        </div>
+
+
+                        <hr class="mb-4">
+                        <button class="btn btn-primary btn-lg btn-block mb-4" style="background: #f36c1e; border: 1px solid #f36c1e;" type="submit">Continue to
+                            checkout</button>
+                    </form>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+
+
     <footer dir="rtl" class="text-right sub-footer">
         <div class="container">
             <div class="row justify-content-between">
@@ -233,27 +329,27 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@16.0.3/build/js/intlTelInput.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.6/js/intlTelInput.min.js"></script>
 
     <script src="{{asset('js/filter.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/jquery-2.1.3.min.js')}}"></script>
     <script src="{{asset('js/owl.carousel.min.js')}}"></script>
     <script src="{{asset('js/all-product.js')}}"></script>
     <script src="{{asset('js/singleProduct.js')}}"></script>
-    <script src="{{asset('js/app.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/smoothproducts.min.js')}}"></script>
-
+    <script src="{{asset('js/checkout.js')}}"></script>
     <script type="text/javascript">
         /* wait for images to load */
-        $(window).load(function() {
-            $('.sp-wrap').smoothproducts();
-        });
         $('#cart').click(function(e) {
             e.stopPropagation();
             $(".shopping-cart").toggleClass("active");
         });
+        $(window).load(function() {
+            $('.sp-wrap').smoothproducts();
+        });
         $(document).ready(function() {
             renderCart();
-            renderSpecsTable();
         });
 
         function renderCart() {
@@ -278,81 +374,8 @@
             $('#cart-items-total').html(itemTotal);
             $('#cart-items').html(cartHtml);
         }
-
-        function renderSpecsTable() {
-            let compare = localStorage.getItem('compare');
-            compare = compare ? JSON.parse(compare) : {};
-            let url = "{{ route('store.compareProducts') }}";
-            let tableHtml = '';
-            console.log();
-            if (compare.products.length > 0) {
-                axios.post(url, {
-                    products: compare.products
-                }).then(function(response) {
-                    let products = response.data;
-                    if (products && products.length > 0) {
-                        let specs = JSON.parse(products[0].type_specs);
-                        tableHtml = `
-                        <tr>
-                            <td >الفئة</td>
-                            <td class="text-center" colspan="${(products).length}">${products[0].type_name}</td>
-                        </tr>
-                        `;
-                        tableHtml += `
-                        <tr>
-                        <td >المنتج</td>
-                        `;
-                        for (let i in products) {
-                            let product = products[i];
-                            tableHtml += `
-                                <td>${product.name} <button onclick="removeFromCompare(${product.id})" class="btn"><i class="fa fa-times"></i></button></td>
-                                `;
-                        }
-                        tableHtml += `
-                            </tr>
-                            `;
-                        for (let si in specs) {
-                            let spec = specs[si];
-                            tableHtml += `
-                            <tr>
-                                <td >${spec.title}</td>
-                            `;
-                            for (let i in products) {
-                                let product = products[i];
-                                let pSpecs = JSON.parse(product.specifications);
-                                tableHtml += `
-                                <td>${pSpecs[si]}</td>
-                                `;
-                            }
-                            tableHtml += `
-                            </tr>
-                            `;
-                        }
-                    }
-                    $('#specs-data').html(tableHtml);
-
-                }).catch(function(error) {
-
-                });
-            } else {
-
-                $('#specs-data').html('');
-            }
-
-
-        }
-
-        function removeFromCompare(id) {
-            console.log(id);
-            let compare = localStorage.getItem('compare');
-            compare = compare ? JSON.parse(compare) : {};
-            console.log(compare);
-            compare.products = compare.products.filter(item => item != id);
-            localStorage.setItem('compare', JSON.stringify(compare));
-            renderSpecsTable();
-        }
     </script>
-    <script src=" //cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js "></script>
+    <script src=" //cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
 </body>
 

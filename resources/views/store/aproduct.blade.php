@@ -24,7 +24,6 @@
     <link rel="stylesheet" href="{{asset('css/singleProduct.css')}}">
 
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
-    <script src=" //cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js "></script>
 
 </head>
 
@@ -255,7 +254,7 @@
                                                                 </a>
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <a href="#" class="btn btn-primary" style="width:100%">
+                                                                <a onclick="addToCompare('{{($product->id)}}', '{{($product->type)}}')" class="btn btn-primary" style="width:100%">
 
                                                                     <i class="fas fa-exchange-alt">
 
@@ -780,7 +779,7 @@
             let cartHtml = '';
             for (let i in cart) {
                 product = cart[i];
-                itemTotal += (cart[i].price) ? Number(cart[i].price) : 0;
+                itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
                 let imageUrl = '{{ route("store.product.image", ":id") }}';
                 imageUrl = imageUrl.replace(':id', product.imageId);
                 cartHtml += `
@@ -794,7 +793,40 @@
             $('#cart-items-total').html(itemTotal);
             $('#cart-items').html(cartHtml);
         }
+
+        function addToCompare(product, type) {
+            let compare = localStorage.getItem('compare');
+            compare = compare ? JSON.parse(compare) : {
+                type: '',
+                products: []
+            };
+            if (compare.type && compare.products.length > 0) {
+                if (type != compare.type) {
+                    toastr.error("Compare List Must Have The Same Type");
+                } else if (compare.products.length === 3) {
+                    toastr.error("Compare List Must Have The Same Type");
+                } else {
+                    if (compare.products.indexOf(product) < 0) {
+                        compare.products.push(product);
+                        toastr.success('Added to Compare Successfuly');
+                    }
+                }
+            } else {
+                compare.type = type;
+                if (compare.products.length === 3) {
+                    toastr.error("Compare List Must Have The Same Type");
+                } else {
+                    if (compare.products.indexOf(product) < 0) {
+                        compare.products.push(product)
+                        toastr.success('Added to Compare Successfuly');
+                    }
+                }
+            }
+            localStorage.setItem('compare', JSON.stringify(compare));
+        }
     </script>
+    <script src=" //cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
 </body>
 
 </html>

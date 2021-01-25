@@ -458,7 +458,7 @@
             let cartHtml = '';
             for (let i in cart) {
                 product = cart[i];
-                itemTotal += (cart[i].price) ? Number(cart[i].price) : 0;
+                itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
                 let imageUrl = '{{ route("store.product.image", ":id") }}';
                 imageUrl = imageUrl.replace(':id', product.imageId);
                 cartHtml += `

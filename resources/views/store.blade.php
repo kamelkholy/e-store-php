@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="{{asset('css/media-query.css')}}">
 
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
-    <script src=" //cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js "></script>
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 </head>
@@ -2247,7 +2246,7 @@
             let cartHtml = '';
             for (let i in cart) {
                 product = cart[i];
-                itemTotal += (cart[i].price) ? Number(cart[i].price) : 0;
+                itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
                 let imageUrl = '{{ route("store.product.image", ":id") }}';
                 imageUrl = imageUrl.replace(':id', product.imageId);
                 cartHtml += `
@@ -2263,6 +2262,8 @@
         }
     </Script>
     <script src="{{asset('js/script.js')}}"></script>
+    <script src=" //cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js "></script>
+
 </body>
 
 </html>

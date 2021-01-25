@@ -23,7 +23,6 @@
     <link rel="stylesheet" href="{{asset('css/shoppingcart.css')}}">
 
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
-    <script src=" //cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js "></script>
 
 </head>
 
@@ -103,104 +102,102 @@
         </div>
     </nav>
 
-
-    <section class="menu-section" dir="rtl">
-        <div class="menu-container">
-            <div class="menu text-right">
-                <ul>
-                    <li><a href="{{route('store')}}">الرئيسية</a></li>
-                    @foreach($parents as $parent)
-                    <li><a href="{{route('store.products.category', $parent->id)}}">{{$parent->name}}</a>
-                        @if($children->contains('parent', $parent->id))
-                        <ul>
-                            @foreach($children as $lv1)
-                            @if($lv1->parent == $parent->id && $lv1->level == 1)
-                            <li><a href="{{route('store.products.category', $lv1->id)}}">{{$lv1->name}}</a>
-                                <ul>
-                                    @foreach($children as $lv2)
-                                    @if($lv2->parent == $lv1->id && $lv2->level == 2)
-                                    <li><a href="{{route('store.products.category', $lv2->id)}}">{{$lv2->name}} </a></li>
-                                    @endif
-                                    @endforeach
-                                </ul>
-                            </li>
+    <form method="POST" action="{{route('store.checkout')}}">
+        @csrf
+        <section class="menu-section" dir="rtl">
+            <div class="menu-container">
+                <div class="menu text-right">
+                    <ul>
+                        <li><a href="{{route('store')}}">الرئيسية</a></li>
+                        @foreach($parents as $parent)
+                        <li><a href="{{route('store.products.category', $parent->id)}}">{{$parent->name}}</a>
+                            @if($children->contains('parent', $parent->id))
+                            <ul>
+                                @foreach($children as $lv1)
+                                @if($lv1->parent == $parent->id && $lv1->level == 1)
+                                <li><a href="{{route('store.products.category', $lv1->id)}}">{{$lv1->name}}</a>
+                                    <ul>
+                                        @foreach($children as $lv2)
+                                        @if($lv2->parent == $lv1->id && $lv2->level == 2)
+                                        <li><a href="{{route('store.products.category', $lv2->id)}}">{{$lv2->name}} </a></li>
+                                        @endif
+                                        @endforeach
+                                    </ul>
+                                </li>
+                                @endif
+                                @endforeach
+                            </ul>
                             @endif
-                            @endforeach
-                        </ul>
-                        @endif
-                    </li>
-                    @endforeach
-                </ul>
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <div class="basket" style="margin-top: 50px; margin-bottom: 50px;">
-        <div class="container">
-            <h2 style="text-align: center; font-weight: 800; font-size: 30px; margin-top: 30px;">Shopping cart</h2>
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="basket-labels">
-                        <div class="col-md-12" style="background: #e9ecef;">
-                            <div class="row">
-                                <div class="col-md-6 col-6 py-3">
-                                    <span class="item item-heading">المنتج</span>
-                                </div>
+        <div class="basket" style="margin-top: 50px; margin-bottom: 50px;">
+            <div class="container">
+                <h2 style="text-align: center; font-weight: 800; font-size: 30px; margin-top: 30px;">Shopping cart</h2>
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="basket-labels">
+                            <div class="col-md-12" style="background: #e9ecef;">
+                                <div class="row">
+                                    <div class="col-md-6 col-6 py-3">
+                                        <span class="item item-heading">المنتج</span>
+                                    </div>
 
-                                <div class="col-md-3 col-3 py-3">
-                                    <span class="quantity">الكمية</span>
+                                    <div class="col-md-3 col-3 py-3">
+                                        <span class="quantity">الكمية</span>
+                                    </div>
+                                    <div class="col-md-3 col-3 py-3">
+                                        <span class="price">السعر</span>
+                                    </div>
                                 </div>
-                                <div class="col-md-3 col-3 py-3">
-                                    <span class="price">السعر</span>
-                                </div>
-                                <!-- <div class="col-md-2 col-2">
-                                    <span class="subtotal">السعر كامل </span>
-                                </div> -->
+                            </div>
+
+                            <div id="cart-list" class="basket-product">
                             </div>
                         </div>
 
-                        <div id="cart-list" class="basket-product">
-                        </div>
                     </div>
 
-                </div>
-
-                <div class="col-md-4">
-                    <aside>
-                        <div class="summary">
-                            <div class="summary-total-items"><span id="total-items" class="total-items"></span> عدد العناصر فى سلة
-                                الشراء
-                            </div>
-                            <div class="summary-subtotal">
-                                <div class="subtotal-title">المجموع الفرعي
+                    <div class="col-md-4">
+                        <aside>
+                            <div class="summary">
+                                <div class="summary-total-items"><span id="total-items" class="total-items"></span> عدد العناصر فى سلة
+                                    الشراء
                                 </div>
-                                <div class="subtotal-value final-value" id="basket-subtotal"></div>
-                                <div class="summary-promo hide">
-                                    <div class="promo-title">Promotion</div>
-                                    <div class="promo-value final-value" id="basket-promo"></div>
+                                <div class="summary-subtotal">
+                                    <div class="subtotal-title">المجموع الفرعي
+                                    </div>
+                                    <div class="subtotal-value final-value" id="basket-subtotal"></div>
+                                    <div class="summary-promo hide">
+                                        <div class="promo-title">Promotion</div>
+                                        <div class="promo-value final-value" id="basket-promo"></div>
+                                    </div>
+                                </div>
+                                <div class="summary-delivery">
+                                    <select name="delivery-collection" class="summary-delivery-selection">
+                                        <option value="0" selected="selected">Select Collection or Delivery</option>
+                                        <option value="collection">VISA</option>
+                                        <option value="first-class">cash on delivery</option>
+                                    </select>
+                                </div>
+                                <div class="summary-total">
+                                    <div class="total-title">Total</div>
+                                    <div class="total-value final-value" id="basket-total"></div>
+                                </div>
+                                <div class="summary-checkout">
+                                    <button class="checkout-cta">Go to Secure Checkout</button>
                                 </div>
                             </div>
-                            <div class="summary-delivery">
-                                <select name="delivery-collection" class="summary-delivery-selection">
-                                    <option value="0" selected="selected">Select Collection or Delivery</option>
-                                    <option value="collection">VISA</option>
-                                    <option value="first-class">cash on delivery</option>
-                                </select>
-                            </div>
-                            <div class="summary-total">
-                                <div class="total-title">Total</div>
-                                <div class="total-value final-value" id="basket-total"></div>
-                            </div>
-                            <div class="summary-checkout">
-                                <button class="checkout-cta">Go to Secure Checkout</button>
-                            </div>
-                        </div>
-                    </aside>
+                        </aside>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
+    </form>
 
 
 
@@ -311,7 +308,7 @@
             let cartHtml = '';
             for (let i in cart) {
                 product = cart[i];
-                itemTotal += (cart[i].price) ? Number(cart[i].price) : 0;
+                itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
                 let imageUrl = '{{ route("store.product.image", ":id") }}';
                 imageUrl = imageUrl.replace(':id', product.imageId);
                 cartHtml += `
@@ -335,7 +332,7 @@
             for (let i in cart) {
                 product = cart[i];
                 itemTotalCount += cart[i].quantity;
-                itemTotal += (cart[i].price) ? Number(cart[i].price) : 0;
+                itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
                 let imageUrl = '{{ route("store.product.image", ":id") }}';
                 imageUrl = imageUrl.replace(':id', product.imageId);
                 cartHtml += `                            
@@ -383,6 +380,7 @@
             renderCartList();
         }
     </script>
+    <script src=" //cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js "></script>
 
 </body>
 

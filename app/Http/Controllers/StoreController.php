@@ -41,6 +41,11 @@ class StoreController extends Controller
 
         return view('store.cart', ['brands' => $brands, 'parents' => $parentsData, 'children' => $children]);
     }
+    function checkout()
+    {
+
+        return view('store.checkout', []);
+    }
     function compare()
     {
 
