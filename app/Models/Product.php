@@ -35,6 +35,9 @@ class Product extends Model
         'width',
         'height',
         'length_class',
+        'shippingType',
+        'discount',
+        'enable_discount',
     ];
     public function typeObj()
     {

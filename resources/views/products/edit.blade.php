@@ -133,6 +133,38 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <div class="row">
+                                <label class="col-md-4" align="right">Discount</label>
+                                <div class="col-md-4">
+                                    <input type="number" name="discount" value="{{$data->discount}}" class="form-control" />
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="col-md-2 form-check-input" type="checkbox" id="enable_discount" name="enable_discount" @if($data->enable_discount) checked @endif>
+                                    <label class=" col-md-2 form-check-label" for="enable_discount">
+                                        Enabled
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <label class="col-md-4" align="right">Shipping Type</label>
+                                <div class="col-md-8">
+                                    <select class="form-control" id="shipping" name="shippingType" required>
+                                        <option value="" selected>Select</option>
+                                        <?php
+                                        $shippingTypes = config('app.shipping_types');
+                                        ?>
+                                        @foreach($shippingTypes as $ship)
+                                        <option value="{{$ship}}" @if($ship==$data->shippingType)selected @endif>{{ucfirst($ship)}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <h1>
+                            </h1>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
                                 <label class="col-md-4" align="right">Brand</label>
                                 <div class="col-md-8">
                                     <select class="form-control" id="brands" name="brand">

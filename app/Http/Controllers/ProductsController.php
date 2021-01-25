@@ -79,6 +79,7 @@ class ProductsController extends Controller
             'description'  => 'required',
             'sortOrder'  => 'integer|nullable',
             'type'  => 'required',
+            'shippingType'  => 'required|in:calculated,free,flat',
             'specifications'  => 'required',
             'specifications.*'  => 'required',
             'img'  => 'required',
@@ -92,6 +93,7 @@ class ProductsController extends Controller
             'brand'  => $request->brand,
             'category'  => $request->category,
             'type'  => $request->type,
+            'shippingType'  => $request->shippingType,
             'specifications'  => json_encode($request->specifications),
             'sku'  => $request->sku,
             'price'  => $request->price,
@@ -106,7 +108,14 @@ class ProductsController extends Controller
         if (isset($request->sortOrder)) {
             $form_data['sortOrder'] = $request->sortOrder;
         }
-
+        if (isset($request->enable_discount) && isset($request->discount)) {
+            $form_data['enable_discount'] = true;
+        } else {
+            $form_data['enable_discount'] = false;
+        }
+        if (isset($request->discount)) {
+            $form_data['discount'] = $request->discount;
+        }
         $product = Product::create($form_data);
         $dataImages = [];
         foreach ($request->img as $key => $value) {
@@ -196,6 +205,7 @@ class ProductsController extends Controller
             'description'  => 'required',
             'sortOrder'  => 'integer|nullable',
             'type'  => 'required',
+            'shippingType'  => 'required|in:calculated,free,flat',
             'specifications'  => 'required',
             'specifications.*'  => 'required',
         ]);
@@ -206,6 +216,7 @@ class ProductsController extends Controller
         $product->brand  = $request->brand;
         $product->category  = $request->category;
         $product->type  = $request->type;
+        $product->shippingType  = $request->shippingType;
         $product->specifications  = json_encode($request->specifications);
         $product->sku  = $request->sku;
         $product->price  = $request->price;
@@ -218,6 +229,14 @@ class ProductsController extends Controller
         $product->length_class  = $request->length_class;
         if (isset($request->sortOrder)) {
             $product->sortOrder = $request->sortOrder;
+        }
+        if (isset($request->enable_discount) && isset($request->discount)) {
+            $product->enable_discount = true;
+        } else {
+            $product->enable_discount = false;
+        }
+        if (isset($request->discount)) {
+            $product->discount = $request->discount;
         }
         if (isset($request->tags)) {
             $productTags = [];

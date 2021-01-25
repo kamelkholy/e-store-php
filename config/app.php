@@ -12,6 +12,7 @@ return [
     | any other location as required by the application or its packages.
     |
     */
+    'shipping_types' => ['calculated', 'flat', 'free'],
 
     'name' => env('APP_NAME', 'Laravel'),
 
@@ -53,7 +54,6 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
-
     'asset_url' => env('ASSET_URL', null),
 
     /*
