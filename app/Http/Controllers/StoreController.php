@@ -43,7 +43,6 @@ class StoreController extends Controller
     }
     function checkout()
     {
-
         return view('store.checkout', []);
     }
     function compare()
