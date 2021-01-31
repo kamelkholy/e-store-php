@@ -30,6 +30,7 @@ class CreateProductsTable extends Migration
             $table->integer('discount')->nullable();
             $table->boolean('enable_discount')->default(0);
             $table->enum('shippingType', ['calculated', 'flat', 'free']);
+            $table->decimal('shipping_fees')->nullable();
 
             $table->unsignedBigInteger('type');
             $table->unsignedBigInteger('brand');
