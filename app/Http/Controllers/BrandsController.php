@@ -56,13 +56,7 @@ class BrandsController extends Controller
         if (isset($request->sortOrder)) {
             $form_data['sortOrder'] = $request->sortOrder;
         }
-        try {
-            //code...
-            Brand::create($form_data);
-        } catch (\Throwable $th) {
-            dd($th);
-            //throw $th;
-        }
+        Brand::create($form_data);
         return redirect()->back()->with('success', 'Brand Created Successfully');
     }
 
