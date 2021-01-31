@@ -67,7 +67,7 @@
                     <a href="{{url('/admin')}}">Dashboard</a>
                 </li>
                 <li>
-                    <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Modules</a>
+                    <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Store Modules</a>
                     <ul class="collapse list-unstyled" id="homeSubmenu">
                         <li class="{{ request()->routeIs('categories.index') ? 'active' : ''  }}">
                             <a href=" {{url('/categories')}}">Categories</a>
@@ -88,13 +88,19 @@
                 </li>
 
                 <li>
-                    <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Pages</a>
+                    <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Settings</a>
                     <ul class="collapse list-unstyled" id="pageSubmenu">
-                        <li>
-                            <a href="#">Page 1</a>
+                        <li class="{{ request()->routeIs('storeSettings.index') ? 'active' : ''  }}">
+                            <a href="{{route('storeSettings.index')}}">Store Settings</a>
                         </li>
-                        <li>
-                            <a href="#">Page 2</a>
+                        <li class="{{ request()->routeIs('users.index') ? 'active' : ''  }}">
+                            <a href="{{route('users.index')}}">Users</a>
+                        </li>
+                        <li class="{{ request()->routeIs('customers.index') ? 'active' : ''  }}">
+                            <a href="{{route('customers.index')}}">Customers</a>
+                        </li>
+                        <li class="{{ request()->routeIs('cityShippings.index') ? 'active' : ''  }}">
+                            <a href="{{route('cityShippings.index')}}">City Shipping</a>
                         </li>
                         <li>
                             <a href="#">Page 3</a>

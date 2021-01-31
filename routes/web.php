@@ -16,9 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect()->route('store');
 });
-Route::get('/admin', function () {
-    return view('dashboard');
-})->name('dashboard');
+
+
 Route::get('/store', ['App\Http\Controllers\StoreController', 'index'])->name('store');
 Route::get('/store/cart', ['App\Http\Controllers\StoreController', 'cart'])->name('store.cart');
 Route::post('/store/checkout', ['App\Http\Controllers\StoreController', 'checkout'])->name('store.checkout');
@@ -31,8 +30,22 @@ Route::get('store/cart-product/{id}', ['App\Http\Controllers\StoreController', '
 Route::get('store/products/category/{id}', ['App\Http\Controllers\StoreController', 'productsByCategory'])->name('store.products.category');
 Route::get('/store-categories', ['App\Http\Controllers\CategoriesController', 'getForStore']);
 
-Route::resource('brands', 'App\Http\Controllers\BrandsController');
-Route::resource('tags', 'App\Http\Controllers\TagsController');
-Route::resource('products', 'App\Http\Controllers\ProductsController');
-Route::resource('categories', 'App\Http\Controllers\CategoriesController');
-Route::resource('types', 'App\Http\Controllers\TypeController');
+
+Route::get('/admin', function () {
+    return view('dashboard');
+})->middleware('auth')->name('dashboard');
+Route::get('/login', function () {
+    return view('login');
+})->name('login');
+Route::post('/dashboard/login', ['App\Http\Controllers\LoginController', 'authenticate'])->name('dashboard.login');
+
+
+Route::resource('users', 'App\Http\Controllers\UsersController')->middleware('auth');
+Route::resource('customers', 'App\Http\Controllers\CustomersController')->middleware('auth');
+Route::resource('brands', 'App\Http\Controllers\BrandsController')->middleware('auth');
+Route::resource('tags', 'App\Http\Controllers\TagsController')->middleware('auth');
+Route::resource('products', 'App\Http\Controllers\ProductsController')->middleware('auth');
+Route::resource('categories', 'App\Http\Controllers\CategoriesController')->middleware('auth');
+Route::resource('types', 'App\Http\Controllers\TypeController')->middleware('auth');
+Route::resource('cityShippings', 'App\Http\Controllers\CityShippingController')->middleware('auth');
+Route::resource('storeSettings', 'App\Http\Controllers\StoreSettingController')->middleware('auth');
