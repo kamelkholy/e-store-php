@@ -23,6 +23,7 @@ Route::get('/store/cart', ['App\Http\Controllers\StoreController', 'cart'])->nam
 Route::post('/store/checkout', ['App\Http\Controllers\StoreController', 'checkout'])->name('store.checkout');
 Route::get('/store/compare', ['App\Http\Controllers\StoreController', 'compare'])->name('store.compare');
 Route::post('/store/compare', ['App\Http\Controllers\StoreController', 'compareProducts'])->name('store.compareProducts');
+Route::post('/store/refresh-cart', ['App\Http\Controllers\StoreController', 'refreshCart'])->name('store.refreshCart');
 Route::get('store/products', ['App\Http\Controllers\StoreController', 'products'])->name('store.products');
 Route::get('store/products/{id}', ['App\Http\Controllers\StoreController', 'aproduct'])->name('store.aproduct');
 Route::get('store/products-images/{id}', ['App\Http\Controllers\StoreController', 'showProductImage'])->name('store.product.image');
