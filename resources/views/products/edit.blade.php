@@ -160,8 +160,14 @@
                                     </select>
                                 </div>
                             </div>
-                            <h1>
-                            </h1>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <label class="col-md-4" align="right">Shipping Fees</label>
+                                <div class="col-md-8">
+                                    <input value="{{$data->shipping_fees}}" type="number" name="shipping_fees" class="form-control" />
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <div class="row">

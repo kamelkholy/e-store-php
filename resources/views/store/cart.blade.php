@@ -137,6 +137,15 @@
 
         <div class="basket" style="margin-top: 50px; margin-bottom: 50px;">
             <div class="container">
+                @if($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
                 <h2 style="text-align: center; font-weight: 800; font-size: 30px; margin-top: 30px;">Shopping cart</h2>
                 <div class="row">
                     <div class="col-md-8">
@@ -165,25 +174,7 @@
                     <div class="col-md-4">
                         <aside>
                             <div class="summary">
-                                <div class="summary-total-items"><span id="total-items" class="total-items"></span> عدد العناصر فى سلة
-                                    الشراء
-                                </div>
-                                <div class="summary-subtotal">
-                                    <div class="subtotal-title">المجموع الفرعي
-                                    </div>
-                                    <div class="subtotal-value final-value" id="basket-subtotal"></div>
-                                    <div class="summary-promo hide">
-                                        <div class="promo-title">Promotion</div>
-                                        <div class="promo-value final-value" id="basket-promo"></div>
-                                    </div>
-                                </div>
-                                <div class="summary-delivery">
-                                    <select name="delivery-collection" class="summary-delivery-selection">
-                                        <option value="0" selected="selected">Select Collection or Delivery</option>
-                                        <option value="collection">VISA</option>
-                                        <option value="first-class">cash on delivery</option>
-                                    </select>
-                                </div>
+
                                 <div class="summary-total">
                                     <div class="total-title">Total</div>
                                     <div class="total-value final-value" id="basket-total"></div>
@@ -284,6 +275,7 @@
 
     <script src="https://unpkg.com/swiper/swiper-bundle.js"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="{{asset('js/app.js')}}"></script>
 
     <!-- <script src="js/script.js"></script> -->
     <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js'></script> -->
@@ -296,6 +288,7 @@
             $(".shopping-cart").toggleClass("active");
         });
         $(document).ready(function() {
+            refreshCart();
             renderCartItems();
             renderCartList();
         });
@@ -308,14 +301,19 @@
             let cartHtml = '';
             for (let i in cart) {
                 product = cart[i];
-                itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
+                if (cart[i].final_price) {
+                    itemTotal += (cart[i].final_price) ? Number(cart[i].final_price) * cart[i].quantity : 0;
+                } else {
+                    itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
+                }
                 let imageUrl = '{{ route("store.product.image", ":id") }}';
                 imageUrl = imageUrl.replace(':id', product.imageId);
+                let price = (cart[i].final_price) ? cart[i].final_price : cart[i].price;
                 cartHtml += `
                             <li class="clearfix">
                                 <img src="${imageUrl}" alt="" />
                                 <span class="item-name">${product.name}</span>
-                                <span class="item-price">${isNaN(product.price)?product.price:product.price}</span>
+                                <span class="item-price">${price}</span>
                                 <span class="item-quantity">Quantity: ${product.quantity}</span>
                             </li>`;
             }
@@ -332,9 +330,14 @@
             for (let i in cart) {
                 product = cart[i];
                 itemTotalCount += cart[i].quantity;
-                itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
+                if (cart[i].final_price) {
+                    itemTotal += (cart[i].final_price) ? Number(cart[i].final_price) * cart[i].quantity : 0;
+                } else {
+                    itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
+                }
                 let imageUrl = '{{ route("store.product.image", ":id") }}';
                 imageUrl = imageUrl.replace(':id', product.imageId);
+                let price = (cart[i].final_price) ? cart[i].final_price : cart[i].price;
                 cartHtml += `                            
                         <div class="col-md-12 py-3" style="border-bottom: 1px solid #eee;">
                             <div class="row">
@@ -343,20 +346,19 @@
                                         <div class="product-image">
                                             <img src="${imageUrl}" alt="Placholder Image 2" class="product-frame">
                                         </div>
-
                                         <div class="product-details">
                                             <h1>${product.name}</h1>
-
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-3">
                                     <div class="quantity">
-                                        <input type="number" value="${product.quantity}" min="1" class="quantity-field">
+                                        <input onchange="changeTotal(event, ${i})" name="products[${i}][quantity]" type="number" value="${product.quantity}" min="1" class="quantity-field">
+                                        <input class="d-none" type="text" value="${i}" name="products[${i}][id]" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-2 col-3">
-                                    <div class="price">${isNaN(product.price)?product.price:product.price}</div>
+                                    <div class="price">${price}</div>
                                 </div>
                                 <div class="remove">
                                     <button onclick="removeFromCart(${i})" class="btn btn-danger"> <i class="far fa-trash-alt" style="color:#fff;"></i>
@@ -365,8 +367,6 @@
                             </div>
                         </div>`;
             }
-            $('#total-items').html(itemTotalCount);
-            $('#basket-subtotal').html(itemTotal);
             $('#basket-total').html(itemTotal);
             $('#cart-list').html(cartHtml);
         }
@@ -378,6 +378,52 @@
             localStorage.setItem("cart", JSON.stringify(cart));
             renderCartItems();
             renderCartList();
+        }
+
+        function changeTotal(e, id) {
+            let cart = localStorage.getItem('cart');
+            cart = cart ? JSON.parse(cart) : {};
+            cart[id].quantity = e.target.value;
+            let itemTotal = 0;
+            for (let i in cart) {
+                product = cart[i];
+                if (cart[i].final_price) {
+                    itemTotal += (cart[i].final_price) ? Number(cart[i].final_price) * cart[i].quantity : 0;
+                } else {
+                    itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
+                }
+            }
+            $('#basket-total').html(itemTotal);
+        }
+
+        function refreshCart() {
+            let cart = localStorage.getItem('cart');
+            if (cart) {
+                cart = JSON.parse(cart);
+                productsIds = Object.keys(cart);
+                let url = "{{ route('store.refreshCart') }}";
+
+                axios.post(url, {
+                    products: productsIds
+                }).then(function(response) {
+                    let products = response.data;
+                    for (const product of products) {
+                        let cartProduct = {
+                            name: product.name,
+                            price: (product.price) ? product.price : 'N/A',
+                            imageId: product.image_id,
+                            final_price: product.final_price
+                        };
+                        if (cart[product.id]) {
+                            cartProduct.quantity = cart[product.id].quantity;
+                        }
+                        cart[product.id] = cartProduct;
+                        localStorage.setItem("cart", JSON.stringify(cart));
+                    }
+                }).catch(function(error) {
+                    console.log(error);
+                });
+            }
         }
     </script>
     <script src=" //cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js "></script>

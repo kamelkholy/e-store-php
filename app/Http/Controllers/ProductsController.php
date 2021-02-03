@@ -105,6 +105,10 @@ class ProductsController extends Controller
             'height'  => $request->height,
             'length_class'  => $request->length_class,
         );
+        if ($request->shippingType == "calculated") {
+            $request->validate(['shipping_fees'  => 'required',]);
+            $form_data['shipping_fees']  = $request->shipping_fees;
+        }
         if (isset($request->sortOrder)) {
             $form_data['sortOrder'] = $request->sortOrder;
         }
@@ -209,7 +213,12 @@ class ProductsController extends Controller
             'specifications'  => 'required',
             'specifications.*'  => 'required',
         ]);
+
         $product = Product::findOrFail($id);
+        if ($request->shippingType == "calculated") {
+            $request->validate(['shipping_fees'  => 'required',]);
+            $product->shipping_fees  = $request->shipping_fees;
+        }
         $product->name = $request->name;
         $product->name_ar = $request->name_ar;
         $product->description  = $request->description;

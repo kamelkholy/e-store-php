@@ -164,6 +164,14 @@
                         </div>
                         <div class="form-group">
                             <div class="row">
+                                <label class="col-md-4" align="right">Shipping Fees</label>
+                                <div class="col-md-8">
+                                    <input type="number" name="shipping_fees" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
                                 <label class="col-md-4" align="right">Brand</label>
                                 <div class="col-md-8">
                                     <select class="form-control" id="brands" name="brand">

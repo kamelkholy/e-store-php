@@ -22,6 +22,8 @@
     <link rel="stylesheet" href="{{asset('css/smoothproducts.css')}}">
     <link rel="stylesheet" href="{{asset('css/singleProduct.css')}}">
     <link rel="stylesheet" href="{{asset('css/checkout.css')}}">
+    <link rel="stylesheet" href="{{asset('css/shoppingcart.css')}}">
+
 
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 
@@ -65,40 +67,9 @@
             <a class="navbar-brand" href="{{route('store')}}">C<span>N</span>T</a>
 
 
-            <div class=" navbar-collapse">
-                <div class="m-auto centered">
-                    <form action="{{route('store.products')}}">
-                        <input id="search" name="search" placeholder="Search term">
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">بحث</button>
-                    </form>
-                </div>
-            </div>
+
 
             <div class="form-inline my-2">
-                <a style="width: 20px; margin-left: 25px;" href="{{route('store.compare')}}">
-                    <i style="color: white;" class="fas fa-exchange-alt"></i>
-                </a>
-                <a href="#" id="cart">
-                    <img src="{{asset('img/shopping-cart.png')}}" style="width: 20px; margin-left: 25px;" alt="">
-                    <span id="cart-count" class="badge">0</span>
-                </a>
-                <a href="#">
-                    <img src="{{asset('img/support.png')}}" style="width: 25px;" alt="">
-                </a>
-                <div class="navbar-right">
-                    <div class="shopping-cart">
-                        <div class="shopping-cart-header">
-                            <i class="fa fa-shopping-cart cart-icon"></i>
-                            <div class="shopping-cart-total">
-                                <span class="lighter-text">Total:</span>
-                                <span id="cart-items-total" class="main-color-text total">$461.15</span>
-                            </div>
-                        </div>
-                        <ul id="cart-items" class="shopping-cart-items">
-                        </ul>
-                        <a href="{{route('store.cart')}}" class="button"> عرض الكل</a>
-                    </div>
-                </div>
 
             </div>
         </div>
@@ -110,40 +81,43 @@
                 <div class="checkout-price">
                     <h4 class="d-flex justify-content-between align-items-center mb-3">
                         <span class="text-muted">Your cart</span>
-                        <span class="badges badge-secondary badge-pill">3</span>
                     </h4>
                     <ul class="list-group mb-3">
+                        @foreach($products as $product)
                         <li class="list-group-item d-flex justify-content-between lh-condensed">
                             <div>
-                                <h6 class="my-0">Product name</h6>
-                                <small class="text-muted">Brief description</small>
+                                <h6 class="my-0">{{$product->name}}</h6>
+                                <small class="text-muted">Qty: <span>{{$product->bought_qty}}</span></small>
                             </div>
-                            <span class="text-muted">$12</span>
+                            @if(isset($product->final_price))
+                            <span class="text-muted">{{$product->final_price}}</span>
+                            @else
+                            <span class="text-muted">{{$product->price}}</span>
+                            @endif
                         </li>
-                        <li class="list-group-item d-flex justify-content-between lh-condensed">
-                            <div>
-                                <h6 class="my-0">Second product</h6>
-                                <small class="text-muted">Brief description</small>
-                            </div>
-                            <span class="text-muted">$8</span>
+                        @endforeach
+
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Sub Total</span>
+                            <strong>{{$total}}</strong>
                         </li>
-                        <li class="list-group-item d-flex justify-content-between lh-condensed">
-                            <div>
-                                <h6 class="my-0">Third item</h6>
-                                <small class="text-muted">Brief description</small>
+                        <li class="list-group-item d-flex justify-content-between bg-dark">
+                            <div class="text-info">
+                                <h6 class="my-0 text-white">Shipping</h6>
+                                @if($isCustomShipping)
+                                <div>
+                                    <small class="text-muted"> + City: <span id="city-shipping"></span></small>
+                                </div>
+                                @endif
+                                <div>
+                                    <small class="text-muted"> + Item Shipping: <span>{{$shipping_fees}}</span></small>
+                                </div>
                             </div>
-                            <span class="text-muted">$5</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between bg-light">
-                            <div class="text-success ">
-                                <h6 class="my-0 text-white">Promo code</h6>
-                                <small>EXAMPLECODE</small>
-                            </div>
-                            <span class="text-success">-$5</span>
+                            <span class="text-info">+<span id="total-shipping"> {{$shipping_fees}}</span></span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between">
-                            <span>Total (USD)</span>
-                            <strong>$20</strong>
+                            <span>Total</span>
+                            <strong id="total-amount">{{$shipping_fees + $total}}</strong>
                         </li>
                     </ul>
                     <!-- <form class="card p-2">
@@ -159,51 +133,25 @@
             <div class="col-md-8 order-md-1">
                 <div class="checkout-forms">
                     <h4 class="mb-3">Billing address</h4>
-                    <form class="needs-validation" action="https://www.google.com/webhp?rct=j" novalidate="">
+                    <form class="needs-validation" action="https://www.google.com/webhp?rct=j" novalidate="" autocomplete="off">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="firstName">First name</label>
-                                <input type="text" class="form-control" id="firstName" placeholder="" value="" required="">
+                                <input name="first_name" type="text" class="form-control" id="firstName" placeholder="" value="" required="">
                                 <div class="invalid-feedback"> Valid first name is required. </div>
                             </div>
 
-
-
-                            <!-- <input id="phone" name="phone" type="tel"> -->
-
                             <div class="col-md-6 mb-3">
                                 <label for="lastName">Last name</label>
-                                <input type="text" class="form-control" id="lastName" placeholder="" value="" required="">
+                                <input name="last_name" type="text" class="form-control" id="lastName" placeholder="" value="" required="">
                                 <div class="invalid-feedback"> Valid last name is required. </div>
                             </div>
                         </div>
-                        <!-- <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <label for="firstName">phone number</label>
-                            <input class="form-control" placeholder="" id="phone" name="phone" type="tel" value=""
-                                required="">
-                            <div class="invalid-feedback"> Valid first name is required. </div>
-                        </div>
-                    </div> -->
-                        <!-- <div class="mb-3">
-                        <label for="username">Username</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">@</span>
-                            </div>
-                            <input type="text" class="form-control" id="username" placeholder="Username" required="">
-                            <div class="invalid-feedback" style="width: 100%;"> Your username is required. </div>
-                        </div>
-                    </div> -->
-
 
                         <div class="form-row">
                             <div class="form-group col-12 col-sm-6 col-md-12">
                                 <label>Phone number</label>
-                                <!-- <div class="input-group input-group-sm"> -->
-                                <input id="phone" type="tel" class="form-control" pattern="^(01)([0-9]{9})$" required="">
-
-                                <!-- </div> -->
+                                <input name="phone" id="phone" type="tel" class="form-control" pattern="^(01)([0-9]{9})$" required="">
                             </div>
                         </div>
 
@@ -211,36 +159,46 @@
                         <div class="mb-3">
                             <!-- <span class="text-muted">(Optional)</span> -->
                             <label for="email">Email </label>
-                            <input type="email" class="form-control" id="email" required="" placeholder="you@example.com" pattern="^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$">
+                            <input name="email" type="email" class="form-control" id="email" required="" placeholder="you@example.com" pattern="^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$">
                             <div class="invalid-feedback"> Please enter a valid email address for shipping updates.
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="address">Address</label>
-                            <input type="text" class="form-control" id="address" placeholder="1234 Main St" required="">
+                            <input name="address" type="text" class="form-control" id="address" placeholder="1234 Main St" required="">
                             <div class="invalid-feedback"> Please enter your shipping address. </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="province">Province</label>
-                                <input type="text" class="form-control" id="province" placeholder="Province" required="">
-                                <div class="invalid-feedback"> Please select a valid province. </div>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="city">City</label>
+                        <div class="mb-3">
+                            <label for="city">City</label>
+                            <small class="text-muted"> Fees Apply on Custom Shipped Items Only </small>
+                            <select onchange="setCityShipping(this.value)" name="city" class="form-control" id="city" required="">
+                                <option value=""></option>
+                                @foreach($cityShippings as $ship)
+                                <option value="{{ $ship->shipping_fees }}"> {{$ship->name. " ------- (Fees:".$ship->shipping_fees.")"}}</option>
+                                @endforeach
+                            </select>
 
-                                <input type="text" class="form-control" id="city" placeholder="city" required="">
-
-
-                                <div class="invalid-feedback"> Please provide a valid city. </div>
-                            </div>
-
+                            <div class="invalid-feedback"> Please provide a valid city. </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message">Shipping Message</label>
+                            <input name="message" type="text" class="form-control" id="message" placeholder="Message" required="">
+                            <div class="invalid-feedback"> Please provide a valid message. </div>
                         </div>
 
+                        <div class="summary-delivery">
+                            <label for="message">Payment</label>
 
+                            <select name="payment" name="delivery-collection" class="summary-delivery-selection">
+                                <option value="" selected="selected">Select Payment Method</option>
+                                <!-- <option value="collection">VISA</option> -->
+                                <option value="cash_on_delivery">CASH ON DELIVERY</option>
+                            </select>
+                        </div>
                         <hr class="mb-4">
                         <button class="btn btn-primary btn-lg btn-block mb-4" style="background: #f36c1e; border: 1px solid #f36c1e;" type="submit">Continue to
-                            checkout</button>
+                            checkout
+                        </button>
                     </form>
                 </div>
             </div>
@@ -331,6 +289,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@16.0.3/build/js/intlTelInput.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/12.1.6/js/intlTelInput.min.js"></script>
+    <script src="{{asset('js/app.js')}}"></script>
 
     <script src="{{asset('js/filter.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/jquery-2.1.3.min.js')}}"></script>
@@ -348,31 +307,17 @@
         $(window).load(function() {
             $('.sp-wrap').smoothproducts();
         });
-        $(document).ready(function() {
-            renderCart();
-        });
+        $(document).ready(function() {});
 
-        function renderCart() {
-            let cart = localStorage.getItem('cart');
-            cart = cart ? JSON.parse(cart) : {};
-            $('#cart-count').html(Object.keys(cart).length)
-            let itemTotal = 0;
-            let cartHtml = '';
-            for (let i in cart) {
-                product = cart[i];
-                itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
-                let imageUrl = '{{ route("store.product.image", ":id") }}';
-                imageUrl = imageUrl.replace(':id', product.imageId);
-                cartHtml += `
-                            <li class="clearfix">
-                                <img src="${imageUrl}" alt="" />
-                                <span class="item-name">${product.name}</span>
-                                <span class="item-price">${isNaN(product.price)?product.price:product.price}</span>
-                                <span class="item-quantity">Quantity: ${product.quantity}</span>
-                            </li>`;
-            }
-            $('#cart-items-total').html(itemTotal);
-            $('#cart-items').html(cartHtml);
+        function setCityShipping(value) {
+            $('#city-shipping').html(value);
+            let total = "{{ $total }}";
+            let shippingFees = "{{ $shipping_fees }}";
+            let totalShipping = Number(shippingFees) + Number(value);
+            let totalAmount = Number(total) + totalShipping;
+            $('#total-shipping').html(totalShipping);
+            $('#total-amount').html(totalAmount);
+
         }
     </script>
     <script src=" //cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>

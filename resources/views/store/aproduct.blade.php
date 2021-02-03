@@ -219,7 +219,7 @@
                                         <div class="d-flex  justify-content-between" style="border-bottom: 1px solid #ddd;">
                                             <div class="brands pr-4 pl-4">
                                                 <h3 class="modtitle" style="font-size: 20px;"><span> الماركة :</span>
-                                                    <a href="brand?id=9" style="color:#f36c1e ;"> {{$product->brandObj->name}}</a>
+                                                    <a href="brand?id=9" style="color:#f36c1e ;"> @if($product->brandObj){{$product->brandObj->name}} @else N/A @endif</a>
                                                     <!-- <a href="brand?id=9">
                                                     <img src="img/brand/2.png" class="img-fluid" width="200px"
                                                         height="100px" alt="brand">
@@ -316,36 +316,6 @@
                                                 </td>
                                             </tr>
                                             @endforeach
-                                            <tr>
-                                                <!-- <th scope="row"></th> -->
-                                                <!-- <td>Mark</td> -->
-                                                <td>الماركة</td>
-                                                <td>Lenovo</td>
-                                            </tr>
-                                            <tr>
-                                                <!-- <th scope="row">2</th> -->
-                                                <!-- <td>Jacob</td> -->
-                                                <td>موديل الانتاج</td>
-                                                <td>e15</td>
-                                            </tr>
-                                            <tr>
-                                                <!-- <th scope="row">3</th> -->
-                                                <!-- <td>Larry</td> -->
-                                                <td>جيل المعالج</td>
-                                                <td>10th generation</td>
-                                            </tr>
-                                            <tr>
-                                                <!-- <th scope="row">3</th> -->
-                                                <!-- <td>Larry</td> -->
-                                                <td>لوحة المفاتيح</td>
-                                                <td>Non-backlit, Arabic w/NumPad</td>
-                                            </tr>
-                                            <tr>
-                                                <!-- <th scope="row">3</th> -->
-                                                <!-- <td>Larry</td> -->
-                                                <td>الكاميرا</td>
-                                                <td> 720p with ThinkShutter</td>
-                                            </tr>
                                         </tbody>
                                     </table>
 
@@ -730,6 +700,7 @@
             $('.sp-wrap').smoothproducts();
         });
         $(document).ready(function() {
+            refreshCart();
             renderCart();
         });
 
@@ -745,6 +716,7 @@
                         name: response.data.name,
                         price: (response.data.price) ? response.data.price : 'N/A',
                         imageId: response.data.image_id,
+                        final_price: response.data.final_price
                     };
                     if (cart[product]) {
                         cartProduct.quantity = cart[product].quantity + 1;
@@ -779,19 +751,55 @@
             let cartHtml = '';
             for (let i in cart) {
                 product = cart[i];
-                itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
+                if (cart[i].final_price) {
+                    itemTotal += (cart[i].final_price) ? Number(cart[i].final_price) * cart[i].quantity : 0;
+                } else {
+                    itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
+                }
                 let imageUrl = '{{ route("store.product.image", ":id") }}';
                 imageUrl = imageUrl.replace(':id', product.imageId);
+                let price = (cart[i].final_price) ? cart[i].final_price : cart[i].price;
                 cartHtml += `
                             <li class="clearfix">
                                 <img src="${imageUrl}" alt="" />
                                 <span class="item-name">${product.name}</span>
-                                <span class="item-price">${isNaN(product.price)?product.price:product.price}</span>
+                                <span class="item-price">${price}</span>
                                 <span class="item-quantity">Quantity: ${product.quantity}</span>
                             </li>`;
             }
             $('#cart-items-total').html(itemTotal);
             $('#cart-items').html(cartHtml);
+        }
+
+        function refreshCart() {
+            let cart = localStorage.getItem('cart');
+            if (cart) {
+                cart = JSON.parse(cart);
+                productsIds = Object.keys(cart);
+                let url = "{{ route('store.refreshCart') }}";
+
+                axios.post(url, {
+                    products: productsIds
+                }).then(function(response) {
+                    let products = response.data;
+                    for (const product of products) {
+                        let cartProduct = {
+                            name: product.name,
+                            price: (product.price) ? product.price : 'N/A',
+                            imageId: product.image_id,
+                            final_price: product.final_price
+
+                        };
+                        if (cart[product.id]) {
+                            cartProduct.quantity = cart[product.id].quantity;
+                        }
+                        cart[product.id] = cartProduct;
+                        localStorage.setItem("cart", JSON.stringify(cart));
+                    }
+                }).catch(function(error) {
+                    console.log(error);
+                });
+            }
         }
 
         function addToCompare(product, type) {

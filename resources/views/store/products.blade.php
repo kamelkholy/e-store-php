@@ -284,6 +284,9 @@
                     @foreach($products as $product)
                     <div class="col-md-4">
                         <div class="product py-4">
+                            @if(($product->enable_discount))
+                            <span class="off bg-success">{{$product->discount}}% OFF</span>
+                            @endif
                             <div class="text-center"> <a href="{{route('store.aproduct', $product->id)}}">
                                     <img src="data:image/png;base64,{{ chunk_split(base64_encode($product->image)) }}" width="200" height="200">
 
@@ -293,7 +296,15 @@
                                 <a href="{{route('store.aproduct', $product->id)}}">
                                     <h5>{{$product->name}}</h5>
                                 </a>
+                                @if(isset($product->final_price))
+                                <del>{{ number_format($product->price,2)}}</del>
+                                <div>
+                                    <span>{{ number_format($product->final_price,2)}}</span>
+                                </div>
+                                @else
                                 <span>{{ number_format($product->price,2)}}</span>
+                                @endif
+
                             </div>
                             <div class="cart-button mt-3 px-2 d-flex justify-content-between align-items-center">
                                 <button onclick="addToCart('{{($product->id)}}')" class="btn btn-primary text-uppercase">Add to cart</button>
@@ -409,6 +420,7 @@
             $(".shopping-cart").toggleClass("active");
         });
         $(document).ready(function() {
+            refreshCart();
             renderCart();
         });
 
@@ -424,6 +436,7 @@
                         name: response.data.name,
                         price: (response.data.price) ? response.data.price : 'N/A',
                         imageId: response.data.image_id,
+                        final_price: response.data.final_price
                     };
                     if (cart[product]) {
                         cartProduct.quantity = cart[product].quantity + 1;
@@ -458,14 +471,19 @@
             let cartHtml = '';
             for (let i in cart) {
                 product = cart[i];
-                itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
+                if (cart[i].final_price) {
+                    itemTotal += (cart[i].final_price) ? Number(cart[i].final_price) * cart[i].quantity : 0;
+                } else {
+                    itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
+                }
                 let imageUrl = '{{ route("store.product.image", ":id") }}';
                 imageUrl = imageUrl.replace(':id', product.imageId);
+                let price = (cart[i].final_price) ? cart[i].final_price : cart[i].price;
                 cartHtml += `
                             <li class="clearfix">
                                 <img src="${imageUrl}" alt="" />
                                 <span class="item-name">${product.name}</span>
-                                <span class="item-price">${isNaN(product.price)?product.price:product.price}</span>
+                                <span class="item-price">${price}</span>
                                 <span class="item-quantity">Quantity: ${product.quantity}</span>
                             </li>`;
             }
@@ -502,6 +520,36 @@
                 }
             }
             localStorage.setItem('compare', JSON.stringify(compare));
+        }
+
+        function refreshCart() {
+            let cart = localStorage.getItem('cart');
+            if (cart) {
+                cart = JSON.parse(cart);
+                productsIds = Object.keys(cart);
+                let url = "{{ route('store.refreshCart') }}";
+
+                axios.post(url, {
+                    products: productsIds
+                }).then(function(response) {
+                    let products = response.data;
+                    for (const product of products) {
+                        let cartProduct = {
+                            name: product.name,
+                            price: (product.price) ? product.price : 'N/A',
+                            imageId: product.image_id,
+                            final_price: product.final_price
+                        };
+                        if (cart[product.id]) {
+                            cartProduct.quantity = cart[product.id].quantity;
+                        }
+                        cart[product.id] = cartProduct;
+                        localStorage.setItem("cart", JSON.stringify(cart));
+                    }
+                }).catch(function(error) {
+                    console.log(error);
+                });
+            }
         }
     </script>
     <script src=" //cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js "></script>

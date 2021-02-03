@@ -2235,6 +2235,7 @@
             }
         });
         $(document).ready(function() {
+            refreshCart();
             renderCart();
         });
 
@@ -2246,19 +2247,55 @@
             let cartHtml = '';
             for (let i in cart) {
                 product = cart[i];
-                itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
+                if (cart[i].final_price) {
+                    itemTotal += (cart[i].final_price) ? Number(cart[i].final_price) * cart[i].quantity : 0;
+                } else {
+                    itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
+                }
                 let imageUrl = '{{ route("store.product.image", ":id") }}';
                 imageUrl = imageUrl.replace(':id', product.imageId);
+                let price = (cart[i].final_price) ? cart[i].final_price : cart[i].price;
                 cartHtml += `
                             <li class="clearfix">
                                 <img src="${imageUrl}" alt="" />
                                 <span class="item-name">${product.name}</span>
-                                <span class="item-price">${isNaN(product.price)?product.price:product.price}</span>
+                                <span class="item-price">${price}</span>
                                 <span class="item-quantity">Quantity: ${product.quantity}</span>
                             </li>`;
             }
             $('#cart-items-total').html(itemTotal);
             $('#cart-items').html(cartHtml);
+        }
+
+        function refreshCart() {
+            let cart = localStorage.getItem('cart');
+            if (cart) {
+                cart = JSON.parse(cart);
+                productsIds = Object.keys(cart);
+                let url = "{{ route('store.refreshCart') }}";
+
+                axios.post(url, {
+                    products: productsIds
+                }).then(function(response) {
+                    let products = response.data;
+                    for (const product of products) {
+                        let cartProduct = {
+                            name: product.name,
+                            price: (product.price) ? product.price : 'N/A',
+                            imageId: product.image_id,
+                            final_price: product.final_price
+
+                        };
+                        if (cart[product.id]) {
+                            cartProduct.quantity = cart[product.id].quantity;
+                        }
+                        cart[product.id] = cartProduct;
+                        localStorage.setItem("cart", JSON.stringify(cart));
+                    }
+                }).catch(function(error) {
+                    console.log(error);
+                });
+            }
         }
     </Script>
     <script src="{{asset('js/script.js')}}"></script>

@@ -33,7 +33,7 @@ class CreateProductsTable extends Migration
             $table->decimal('shipping_fees')->nullable();
 
             $table->unsignedBigInteger('type');
-            $table->unsignedBigInteger('brand');
+            $table->unsignedBigInteger('brand')->nullable();
             $table->unsignedBigInteger('category')->nullable();
             $table->longText('specifications');
             $table->integer('sortOrder')->default(0);
