@@ -51,6 +51,10 @@ class Product extends Model
     {
         return $this->hasOne(Category::class, 'id', 'category');
     }
+    public function decreaseQuantity($ids, $data, $cases)
+    {
+        DB::update("UPDATE products SET `quantity` = CASE `id` {$cases} END WHERE `id` in ({$ids})", $data);
+    }
     public function getAllProducts($brands, $categories, $from, $to)
     {
         return DB::table('products')->leftJoin('product_images as pi', function ($q) {
@@ -99,5 +103,24 @@ class Product extends Model
                 return $query->where('price', '<=', $to);
             })
             ->select('products.*', 'pi.image', 'pi.id as image_id')->get();
+    }
+    public function getRelatedProducts($category, $ids)
+    {
+        return DB::table('products')->leftJoin('product_images as pi', function ($q) {
+            $q->on('pi.product', '=', 'products.id')
+                ->on(
+                    'pi.id',
+                    '=',
+                    DB::raw('(select min(id) from product_images where product = pi.product)')
+                );
+        })
+            ->when($ids !== null && !empty($ids), function ($query) use ($ids) {
+                return $query->whereIn('products.id', $ids);
+            })
+            ->when($category !== null && !empty($category), function ($query) use ($category) {
+                return $query->orWhere('category', $category);
+            })->limit(4)
+            ->select('products.*', 'pi.image', 'pi.id as image_id')
+            ->get();
     }
 }
