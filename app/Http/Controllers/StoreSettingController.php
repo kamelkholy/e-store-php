@@ -14,18 +14,8 @@ class StoreSettingController extends Controller
      */
     public function index()
     {
-        $data = StoreSettings::where([])->get();
-        if (count($data) == 0) {
-            $form_data = array(
-                'address'  => '',
-                'email'  => '',
-                'phone'  => '',
-                'flat_shipping'  => 50,
-            );
-            $data = StoreSettings::create($form_data);
-        } else {
-            $data = $data[0];
-        }
+        $data = new StoreSettings();
+        $data = $data->findOrCreate();
         return view('storeSettings.form', compact('data'));
     }
 
