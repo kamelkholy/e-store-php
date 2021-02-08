@@ -207,10 +207,22 @@
                     <div class="col-md-6">
                         <div class="inner-box-desc">
                             <div class="product-label form-group">
+                                @if(($product->enable_discount))
+                                <span class="off bg-success">{{$product->discount}}% OFF</span>
+                                @endif
                                 <div class="product_page_price price" style="padding: 16px;" itemprop="offerDetails" itemscope="" itemtype="">
-                                    <span style="font-size:40px; font-weight: 700; color: #f36c1e;" class="price-new">{{number_format($product->price)}} EGP
+                                    @if(isset($product->final_price))
+                                    <del style="font-size:30px; font-weight: 700;">{{ number_format($product->price,2)}}</del>
+                                    <div>
+                                        <span style="font-size:40px; font-weight: 700; color: #f36c1e;" class="price-new">
+                                            {{ number_format($product->final_price,2)}} EGP
+                                        </span>
+                                    </div>
+                                    @else
+                                    <span style="font-size:40px; font-weight: 700; color: #f36c1e;" class="price-new">
+                                        {{number_format($product->price, 2)}} EGP
                                     </span>
-
+                                    @endif
 
                                 </div>
 
@@ -247,12 +259,6 @@
                                                     <div class="col-md-12">
                                                         <div class="row pt-4 icons-carts">
 
-                                                            <div class="col-md-6">
-                                                                <a href="#" class="btn btn-primary">
-                                                                    <i class="fas fa-heart"></i>
-                                                                    أضف الى قائمة الامنيات
-                                                                </a>
-                                                            </div>
                                                             <div class="col-md-6">
                                                                 <a onclick="addToCompare('{{($product->id)}}', '{{($product->type)}}')" class="btn btn-primary" style="width:100%">
 
@@ -362,83 +368,40 @@
                 <h3><span>المنتجات المشابهه</span></h3>
             </div>
             <div class="row">
+                @foreach($relatedProducts as $relatedProduct)
                 <div class="col-md-3">
-                    <div class="product py-4"> <span class="off bg-warning">SALE</span>
-                        <div class="text-center"> <a href="#"><img src="img/collection-slider/1.png" width="200">
-                            </a></div>
+                    <div class="product py-4">
+                        @if(($relatedProduct->enable_discount))
+                        <span class="off bg-success">{{$relatedProduct->discount}}% OFF</span>
+                        @endif
+                        <div class="text-center">
+                            <a href="{{route('store.aproduct', $relatedProduct->id)}}">
+                                <img src="data:image/png;base64,{{ chunk_split(base64_encode($relatedProduct->image)) }}" width="200" height="200">
+                            </a>
+                        </div>
                         <div class="about text-center">
 
-                            <a href="#">
-                                <h5>XRD Active Shoes</h5>
+                            <a href="{{route('store.aproduct', $relatedProduct->id)}}">
+                                <h5>{{$relatedProduct->name}}</h5>
                             </a>
-                            <span>$123.43</span>
+                            @if(isset($relatedProduct->final_price))
+                            <del>{{ number_format($relatedProduct->price,2)}}</del>
+                            <div>
+                                <span>{{ number_format($relatedProduct->final_price,2)}}</span>
+                            </div>
+                            @else
+                            <span>{{ number_format($relatedProduct->price,2)}}</span>
+                            @endif
                         </div>
                         <div class="cart-button mt-3 px-2 d-flex justify-content-between align-items-center">
-                            <button class="btn btn-primary text-uppercase">Add to cart</button>
-                            <div class="add"> <span class="product_fav"><i class="fas fa-heart"></i></span>
-                                <span class="product_fav"><i class="fab fa-opencart"></i></span>
+                            <button onclick="addToCart('{{($relatedProduct->id)}}')" class="btn btn-primary text-uppercase">Add to cart</button>
+                            <div class="add">
+                                <span onclick="addToCompare('{{($relatedProduct->id)}}', '{{($relatedProduct->type)}}')" title="Compare" class="product_fav"><i class="fas fa-exchange-alt"></i></span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="product py-4"> <span class="off bg-warning">SALE</span>
-                        <div class="text-center"> <a href="#"><img src="img/collection-slider/1.png" width="200">
-                            </a></div>
-                        <div class="about text-center">
-
-                            <a href="#">
-                                <h5>XRD Active Shoes</h5>
-                            </a>
-                            <span>$123.43</span>
-                        </div>
-                        <div class="cart-button mt-3 px-2 d-flex justify-content-between align-items-center">
-                            <button class="btn btn-primary text-uppercase">Add to cart</button>
-                            <div class="add"> <span class="product_fav"><i class="fas fa-heart"></i></span>
-                                <span class="product_fav"><i class="fab fa-opencart"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="product py-4"> <span class="off bg-warning">SALE</span>
-                        <div class="text-center"> <a href="#"><img src="img/collection-slider/1.png" width="200">
-                            </a></div>
-                        <div class="about text-center">
-
-                            <a href="#">
-                                <h5>XRD Active Shoes</h5>
-                            </a>
-                            <span>$123.43</span>
-                        </div>
-                        <div class="cart-button mt-3 px-2 d-flex justify-content-between align-items-center">
-                            <button class="btn btn-primary text-uppercase">Add to cart</button>
-                            <div class="add"> <span class="product_fav"><i class="fas fa-heart"></i></span>
-                                <span class="product_fav"><i class="fab fa-opencart"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="product py-4"> <span class="off bg-warning">SALE</span>
-                        <div class="text-center"> <a href="#"><img src="img/collection-slider/1.png" width="200">
-                            </a></div>
-                        <div class="about text-center">
-
-                            <a href="#">
-                                <h5>XRD Active Shoes</h5>
-                            </a>
-                            <span>$123.43</span>
-                        </div>
-                        <div class="cart-button mt-3 px-2 d-flex justify-content-between align-items-center">
-                            <button class="btn btn-primary text-uppercase">Add to cart</button>
-                            <div class="add"> <span class="product_fav"><i class="fas fa-heart"></i></span>
-                                <span class="product_fav"><i class="fab fa-opencart"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                @endforeach
             </div>
         </div>
     </section>
@@ -689,6 +652,7 @@
     <script src="{{asset('js/all-product.js')}}"></script>
     <script src="{{asset('js/singleProduct.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/smoothproducts.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('js/cart.js')}}"></script>
 
     <script type="text/javascript">
         /* wait for images to load */
@@ -700,8 +664,11 @@
             $('.sp-wrap').smoothproducts();
         });
         $(document).ready(function() {
-            refreshCart();
-            renderCart();
+            let url = "{{ route('store.refreshCart') }}";
+            let imageUrl = '{{ route("store.product.image", ":id") }}';
+
+            refreshCart(url);
+            renderCart(imageUrl);
         });
 
         function addToCart(product) {
@@ -726,7 +693,9 @@
                     cart[product] = cartProduct;
                     localStorage.setItem("cart", JSON.stringify(cart));
                     toastr.success('Added to Cart Successfuly');
-                    renderCart();
+                    let imageUrl = '{{ route("store.product.image", ":id") }}';
+
+                    renderCart(imageUrl);
                 })
                 .catch(function(error) {
                     // handle error
@@ -741,65 +710,6 @@
                     }
 
                 })
-        }
-
-        function renderCart() {
-            let cart = localStorage.getItem('cart');
-            cart = cart ? JSON.parse(cart) : {};
-            $('#cart-count').html(Object.keys(cart).length)
-            let itemTotal = 0;
-            let cartHtml = '';
-            for (let i in cart) {
-                product = cart[i];
-                if (cart[i].final_price) {
-                    itemTotal += (cart[i].final_price) ? Number(cart[i].final_price) * cart[i].quantity : 0;
-                } else {
-                    itemTotal += (cart[i].price) ? Number(cart[i].price) * cart[i].quantity : 0;
-                }
-                let imageUrl = '{{ route("store.product.image", ":id") }}';
-                imageUrl = imageUrl.replace(':id', product.imageId);
-                let price = (cart[i].final_price) ? cart[i].final_price : cart[i].price;
-                cartHtml += `
-                            <li class="clearfix">
-                                <img src="${imageUrl}" alt="" />
-                                <span class="item-name">${product.name}</span>
-                                <span class="item-price">${price}</span>
-                                <span class="item-quantity">Quantity: ${product.quantity}</span>
-                            </li>`;
-            }
-            $('#cart-items-total').html(itemTotal);
-            $('#cart-items').html(cartHtml);
-        }
-
-        function refreshCart() {
-            let cart = localStorage.getItem('cart');
-            if (cart) {
-                cart = JSON.parse(cart);
-                productsIds = Object.keys(cart);
-                let url = "{{ route('store.refreshCart') }}";
-
-                axios.post(url, {
-                    products: productsIds
-                }).then(function(response) {
-                    let products = response.data;
-                    for (const product of products) {
-                        let cartProduct = {
-                            name: product.name,
-                            price: (product.price) ? product.price : 'N/A',
-                            imageId: product.image_id,
-                            final_price: product.final_price
-
-                        };
-                        if (cart[product.id]) {
-                            cartProduct.quantity = cart[product.id].quantity;
-                        }
-                        cart[product.id] = cartProduct;
-                        localStorage.setItem("cart", JSON.stringify(cart));
-                    }
-                }).catch(function(error) {
-                    console.log(error);
-                });
-            }
         }
 
         function addToCompare(product, type) {

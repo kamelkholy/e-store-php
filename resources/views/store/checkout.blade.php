@@ -88,6 +88,7 @@
                             <div>
                                 <h6 class="my-0">{{$product->name}}</h6>
                                 <small class="text-muted">Qty: <span>{{$product->bought_qty}}</span></small>
+
                             </div>
                             @if(isset($product->final_price))
                             <span class="text-muted">{{$product->final_price}}</span>
@@ -133,7 +134,12 @@
             <div class="col-md-8 order-md-1">
                 <div class="checkout-forms">
                     <h4 class="mb-3">Billing address</h4>
-                    <form class="needs-validation" action="https://www.google.com/webhp?rct=j" novalidate="" autocomplete="off">
+                    <form onsubmit="clearCart()" method="POST" class="needs-validation" action="{{route('store.placeOrder')}}" novalidate="" autocomplete="off">
+                        @csrf
+                        @foreach($products as $product)
+                        <input name="products[{{$product->id}}][id]" value="{{$product->id}}" class="d-none" type="text" readonly>
+                        <input name="products[{{$product->id}}][quantity]" value="{{$product->bought_qty}}" class="d-none" type="text" readonly>
+                        @endforeach
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="firstName">First name</label>
@@ -174,7 +180,7 @@
                             <select onchange="setCityShipping(this.value)" name="city" class="form-control" id="city" required="">
                                 <option value=""></option>
                                 @foreach($cityShippings as $ship)
-                                <option value="{{ $ship->shipping_fees }}"> {{$ship->name. " ------- (Fees:".$ship->shipping_fees.")"}}</option>
+                                <option value="{{ $ship->id }}"> {{$ship->name. " ------- (Fees:".$ship->shipping_fees.")"}}</option>
                                 @endforeach
                             </select>
 
@@ -182,22 +188,21 @@
                         </div>
                         <div class="mb-3">
                             <label for="message">Shipping Message</label>
-                            <input name="message" type="text" class="form-control" id="message" placeholder="Message" required="">
-                            <div class="invalid-feedback"> Please provide a valid message. </div>
+                            <input name="message" type="text" class="form-control" id="message" placeholder="Message">
                         </div>
 
                         <div class="summary-delivery">
                             <label for="message">Payment</label>
 
-                            <select name="payment" name="delivery-collection" class="summary-delivery-selection">
+                            <select name="payment" name="delivery-collection" class="summary-delivery-selection" required>
                                 <option value="" selected="selected">Select Payment Method</option>
                                 <!-- <option value="collection">VISA</option> -->
-                                <option value="cash_on_delivery">CASH ON DELIVERY</option>
+                                <option value="cash">CASH ON DELIVERY</option>
                             </select>
                         </div>
                         <hr class="mb-4">
-                        <button class="btn btn-primary btn-lg btn-block mb-4" style="background: #f36c1e; border: 1px solid #f36c1e;" type="submit">Continue to
-                            checkout
+                        <button class="btn btn-primary btn-lg btn-block mb-4" style="background: #f36c1e; border: 1px solid #f36c1e;" type="submit">
+                            Place Order
                         </button>
                     </form>
                 </div>
@@ -309,15 +314,22 @@
         });
         $(document).ready(function() {});
 
-        function setCityShipping(value) {
-            $('#city-shipping').html(value);
-            let total = "{{ $total }}";
-            let shippingFees = "{{ $shipping_fees }}";
-            let totalShipping = Number(shippingFees) + Number(value);
-            let totalAmount = Number(total) + totalShipping;
-            $('#total-shipping').html(totalShipping);
-            $('#total-amount').html(totalAmount);
+        function clearCart() {}
 
+        function setCityShipping(id) {
+            let isCustomShipping = "{{$isCustomShipping}}";
+            if (isCustomShipping) {
+                let cityShippings = @json($cityShippings);
+                let obj = cityShippings.find(o => o.id == id);
+                let value = obj.shipping_fees;
+                $('#city-shipping').html(value);
+                let total = "{{ $total }}";
+                let shippingFees = "{{ $shipping_fees }}";
+                let totalShipping = Number(shippingFees) + Number(value);
+                let totalAmount = Number(total) + totalShipping;
+                $('#total-shipping').html(totalShipping);
+                $('#total-amount').html(totalAmount);
+            }
         }
     </script>
     <script src=" //cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>

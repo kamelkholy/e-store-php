@@ -8,9 +8,10 @@
 
     <!-- Bootstrap CSS CDN -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <!-- <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'> -->
+    <link href="https://use.fontawesome.com/releases/v5.0.1/css/all.css" rel="stylesheet">
     <!-- Our Custom CSS -->
     <link rel="stylesheet" href="{{asset('css/style.css')}}">
-
     <!-- Font Awesome JS -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
@@ -28,7 +29,32 @@
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
     <script src="{{asset('js/app.js')}}"></script>
+    <script>
+        function getProducts(id) {
+            let optionsHtml = '<option value="">Select</option>\n';
+            if (id) {
+                let url = '{{ route("featuredCategories.getProducts", ":id") }}';
+                url = url.replace(':id', id);
+                axios.get(url)
+                    .then(function(response) {
+                        if (response.data && response.data.length > 0) {
 
+                            let options = response.data.map(function(product) {
+                                return `<option value="${product.id}">${product.name}</option>`
+                            });
+                            optionsHtml += options.join('\n');
+                            $('#featured_products').html(optionsHtml);
+                        }
+                    })
+                    .catch(function(error) {
+                        // handle error
+                        console.log(error);
+                    })
+            } else {
+                $('#featured_products').html(optionsHtml);
+            }
+        }
+    </script>
     <script>
         $(document).ready(function() {
 
@@ -84,10 +110,13 @@
                         <li class="{{ request()->routeIs('products.index') ? 'active' : ''  }}">
                             <a href=" {{url('/products')}}">Products</a>
                         </li>
+                        <li class="{{ request()->routeIs('orders.index') ? 'active' : ''  }}">
+                            <a href=" {{url('/orders')}}">Orders</a>
+                        </li>
                     </ul>
                 </li>
 
-                <li>
+                <li class="mb-5">
                     <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Settings</a>
                     <ul class="collapse list-unstyled" id="pageSubmenu">
                         <li class="{{ request()->routeIs('storeSettings.index') ? 'active' : ''  }}">
@@ -102,8 +131,11 @@
                         <li class="{{ request()->routeIs('cityShippings.index') ? 'active' : ''  }}">
                             <a href="{{route('cityShippings.index')}}">City Shipping</a>
                         </li>
-                        <li>
-                            <a href="#">Page 3</a>
+                        <li class="{{ request()->routeIs('sliders.index') ? 'active' : ''  }}">
+                            <a href="{{route('sliders.index')}}">Sliders</a>
+                        </li>
+                        <li class="{{ request()->routeIs('featuredCategories.index') ? 'active' : ''  }}">
+                            <a href="{{route('featuredCategories.index')}}">Featured Categories</a>
                         </li>
                     </ul>
                 </li>
