@@ -100,13 +100,14 @@ class BrandsController extends Controller
             'name'  => 'required',
             'name_ar'  => 'required',
             'sortOrder'  => 'integer|nullable',
-            'image' => 'required|image|max:2048'
+            'image' => 'image|max:2048'
         ]);
         $brand = Brand::findOrFail($id);
         $brand->name = $request->name;
         $brand->name_ar = $request->name_ar;
-        $brand->sortOrder = $request->sortOrder;
-
+        if (isset($request->sortOrder)) {
+            $brand->sortOrder = $request->sortOrder;
+        }
         if (isset($request->image)) {
             $image_file = $request->image;
             $image = Image::make($image_file);
