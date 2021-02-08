@@ -21,6 +21,7 @@ Route::get('/', function () {
 Route::get('/store', ['App\Http\Controllers\StoreController', 'index'])->name('store');
 Route::get('/store/cart', ['App\Http\Controllers\StoreController', 'cart'])->name('store.cart');
 Route::post('/store/checkout', ['App\Http\Controllers\StoreController', 'checkout'])->name('store.checkout');
+Route::post('/store/place-order', ['App\Http\Controllers\StoreController', 'placeOrder'])->name('store.placeOrder');
 Route::get('/store/compare', ['App\Http\Controllers\StoreController', 'compare'])->name('store.compare');
 Route::post('/store/compare', ['App\Http\Controllers\StoreController', 'compareProducts'])->name('store.compareProducts');
 Route::post('/store/refresh-cart', ['App\Http\Controllers\StoreController', 'refreshCart'])->name('store.refreshCart');
@@ -44,9 +45,15 @@ Route::post('/dashboard/login', ['App\Http\Controllers\LoginController', 'authen
 Route::resource('users', 'App\Http\Controllers\UsersController')->middleware('auth');
 Route::resource('customers', 'App\Http\Controllers\CustomersController')->middleware('auth');
 Route::resource('brands', 'App\Http\Controllers\BrandsController')->middleware('auth');
+Route::resource('featuredCategories', 'App\Http\Controllers\FeaturedCategoriesController')->middleware('auth');
+Route::resource('sliders', 'App\Http\Controllers\SlidersController')->middleware('auth');
 Route::resource('tags', 'App\Http\Controllers\TagsController')->middleware('auth');
+Route::resource('orders', 'App\Http\Controllers\OrdersController')->middleware('auth');
 Route::resource('products', 'App\Http\Controllers\ProductsController')->middleware('auth');
 Route::resource('categories', 'App\Http\Controllers\CategoriesController')->middleware('auth');
 Route::resource('types', 'App\Http\Controllers\TypeController')->middleware('auth');
 Route::resource('cityShippings', 'App\Http\Controllers\CityShippingController')->middleware('auth');
 Route::resource('storeSettings', 'App\Http\Controllers\StoreSettingController')->middleware('auth');
+
+Route::post('/orders/{id}/change-status', ['App\Http\Controllers\OrdersController', 'changeStatus'])->middleware('auth')->name('orders.changeStatus');
+Route::get('/featuredCategories/{id}/products', ['App\Http\Controllers\FeaturedCategoriesController', 'getProducts'])->middleware('auth')->name('featuredCategories.getProducts');
