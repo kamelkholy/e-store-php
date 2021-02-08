@@ -21,7 +21,6 @@ class CreateOrdersTable extends Migration
             $table->string('email');
             $table->text('address');
             $table->string('city');
-            $table->string('province');
             $table->enum('payment_method', ['cash', 'visa']);
             $table->longText('products');
             $table->decimal('total');
@@ -29,8 +28,8 @@ class CreateOrdersTable extends Migration
             $table->decimal('shipping_fees');
             $table->integer('quantity');
             $table->string('status');
-            $table->text('customer_message');
-            $table->text('staff_notes');
+            $table->text('customer_message')->nullable();
+            $table->text('staff_notes')->nullable();
             $table->timestamps();
         });
     }
