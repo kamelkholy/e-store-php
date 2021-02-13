@@ -203,6 +203,32 @@
                     </div>
                     <div class="form-group">
                         <div class="row">
+                            <label class="col-md-2" align="right">Promo Applied:</label>
+                            <div class="col-md-4">
+                                {{($data->promo_applied)?'YES':'NO'}}
+                            </div>
+                        </div>
+                    </div>
+                    @if($data->promo_applied)
+                    <div class="form-group">
+                        <div class="row">
+                            <label class="col-md-2" align="right">Promo Code:</label>
+                            <div class="col-md-4">
+                                {{$data->promo_code}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <label class="col-md-2" align="right">Promo Discount:</label>
+                            <div class="col-md-4">
+                                {{$data->promo_discount}}
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    <div class="form-group">
+                        <div class="row">
                             <label class="col-md-2" align="right">Payment Method:</label>
                             <div class="col-md-4">
                                 {{$data->payment_method}}
@@ -248,6 +274,7 @@
                             <th>Price</th>
                             <th>Selling Price</th>
                             <th>Quantity</th>
+                            <th>Promo Applied</th>
                         </thead>
                         <tbody>
                             @foreach ($data->products as $product)
@@ -262,6 +289,7 @@
                                     @endif
                                 </td>
                                 <td>{{$product->quantity}}</td>
+                                <td>{{($product->promoApplied)? 'YES':'NO'}}</td>
                             </tr>
                             @endforeach
                         </tbody>

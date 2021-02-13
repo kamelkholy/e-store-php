@@ -54,6 +54,7 @@ Route::resource('categories', 'App\Http\Controllers\CategoriesController')->midd
 Route::resource('types', 'App\Http\Controllers\TypeController')->middleware('auth');
 Route::resource('cityShippings', 'App\Http\Controllers\CityShippingController')->middleware('auth');
 Route::resource('storeSettings', 'App\Http\Controllers\StoreSettingController')->middleware('auth');
+Route::resource('promoCodes', 'App\Http\Controllers\PromoCodesController')->middleware('auth');
 
 Route::post('/orders/{id}/change-status', ['App\Http\Controllers\OrdersController', 'changeStatus'])->middleware('auth')->name('orders.changeStatus');
 Route::get('/featuredCategories/{id}/products', ['App\Http\Controllers\FeaturedCategoriesController', 'getProducts'])->middleware('auth')->name('featuredCategories.getProducts');

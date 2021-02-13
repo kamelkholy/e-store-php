@@ -51,8 +51,18 @@ class Product extends Model
     {
         return $this->hasOne(Category::class, 'id', 'category');
     }
-    public function decreaseQuantity($ids, $data, $cases)
+    public function decreaseQuantity($products)
     {
+        $cases = [];
+        $ids = [];
+        $data = [];
+        foreach ($products as $product) {
+            $cases[] = "WHEN {$product->id} then ?";
+            $data[] = $product->quantity - $product->bought_qty;
+            $ids[] = $product->id;
+        }
+        $ids = implode(',', $ids);
+        $cases = implode(' ', $cases);
         DB::update("UPDATE products SET `quantity` = CASE `id` {$cases} END WHERE `id` in ({$ids})", $data);
     }
     public function getAllProducts($brands, $categories, $from, $to)

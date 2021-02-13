@@ -54,6 +54,21 @@
                 $('#featured_products').html(optionsHtml);
             }
         }
+
+        function filterProductsInputs() {
+            let input, filter, ul, li, a, i, txtValue;
+            input = $("#filterProducts")[0];
+            filter = input.value.toUpperCase();
+            li = $("#all-products").find('label');
+            for (i = 0; i < li.length; i++) {
+                txtValue = li[i].textContent || li[i].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    $(`#product-${li[i].id}`).show();
+                } else {
+                    $(`#product-${li[i].id}`).hide();
+                }
+            }
+        }
     </script>
     <script>
         $(document).ready(function() {
@@ -136,6 +151,9 @@
                         </li>
                         <li class="{{ request()->routeIs('featuredCategories.index') ? 'active' : ''  }}">
                             <a href="{{route('featuredCategories.index')}}">Featured Categories</a>
+                        </li>
+                        <li class="{{ request()->routeIs('promoCodes.index') ? 'active' : ''  }}">
+                            <a href="{{route('promoCodes.index')}}">Promo Codes</a>
                         </li>
                     </ul>
                 </li>

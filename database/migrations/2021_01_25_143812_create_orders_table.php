@@ -28,6 +28,9 @@ class CreateOrdersTable extends Migration
             $table->decimal('shipping_fees');
             $table->integer('quantity');
             $table->string('status');
+            $table->boolean('promo_applied');
+            $table->string('promo_code');
+            $table->decimal('promo_discount');
             $table->text('customer_message')->nullable();
             $table->text('staff_notes')->nullable();
             $table->timestamps();

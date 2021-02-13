@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+
 use App\Models\Product;
 use App\Models\Brand;
 use App\Models\Category;
@@ -15,6 +17,8 @@ use App\Models\CityShipping;
 use App\Models\FeaturedCategory;
 use App\Models\Order;
 use App\Models\OrderStatus;
+use App\Models\PromoCode;
+use App\Models\PromoCodeOrder;
 use App\Models\Slider;
 use App\Models\StoreSettings;
 
@@ -90,12 +94,58 @@ class StoreController extends Controller
         }
         $settings = new StoreSettings();
         $settings = $settings->findOrCreate();
-
+        $promo = NULL;
+        $promoApplied = false;
+        $totalPromoDiscount = 0;
+        if (isset($request->promo_code)) {
+            $promo = PromoCode::where('code', $request->promo_code)->get();
+            if (count($promo) == 0) {
+                return redirect()->back()->withErrors(['message' => "Invalid Promo Code"]);
+            }
+            $promo = $promo[0];
+            $startDate = Carbon::createFromFormat('Y-m-d H:i:s',  $promo->start_date);;
+            $endDate = Carbon::createFromFormat('Y-m-d H:i:s',  $promo->end_date);
+            $now = Carbon::now();
+            if ($now->gt($endDate) || $now->lt($startDate)) {
+                return redirect()->back()->withErrors(['message' => "Promo Code is Inactive or Expired"]);
+            }
+            $promo->products = ($promo->products) ? json_decode($promo->products) : [];
+            $promo->categories = ($promo->categories) ? json_decode($promo->categories) : [];
+            $promoApplied = true;
+        }
         $products = Product::whereIn('id', $productIds)->select('id', 'name', 'price', 'quantity', 'shippingType', 'shipping_fees', 'enable_discount', 'discount')->get();
         for ($i = 0; $i < count($products); $i++) {
             $products[$i]->bought_qty = $request->products[$products[$i]->id]['quantity'];
             if ($products[$i]->bought_qty > $products[$i]->quantity) {
                 return redirect()->back()->withErrors(['message' => "Not Enough in Stock"]);
+            }
+            $productApplicable = false;
+            $promoDiscount = 0;
+            if ($promo) {
+                switch ($promo->applicability) {
+                    case 'all':
+                        $productApplicable = true;
+                        break;
+                    case 'some':
+                        if (array_search($products[$i]->id, $promo->products) !== false) {
+                            $productApplicable = true;
+                        }
+                        break;
+                    case 'categories':
+                        if (array_search($products[$i]->category, $promo->categories) !== false) {
+                            $productApplicable = true;
+                        }
+                        break;
+                }
+                $products[$i]->promo_applicable = $productApplicable;
+                if ($productApplicable) {
+                    if ($promo->discount_type == "percentage") {
+                        $promoDiscount = ($products[$i]->price * $promo->discount) / 100;
+                    } elseif ($promo->discount_type == "ammount") {
+                        $promoDiscount = $promo->discount;
+                    }
+                }
+                $totalPromoDiscount += $promoDiscount * $products[$i]->bought_qty;
             }
             if ($products[$i]->enable_discount) {
                 $products[$i]->final_price = $products[$i]->price - ($products[$i]->price * $products[$i]->discount) / 100;
@@ -121,7 +171,10 @@ class StoreController extends Controller
             'cityShippings' => $cityShippings,
             'shipping_fees' => $shippingFees,
             'total' => $total,
-            'isCustomShipping' => $isCustomShipping
+            'isCustomShipping' => $isCustomShipping,
+            'promoDiscount' => $totalPromoDiscount,
+            'promoApplied' => $promoApplied,
+            'promoCode' => ($promoApplied) ? $promo->code : '',
         ]);
     }
     function placeOrder(Request $request)
@@ -156,11 +209,58 @@ class StoreController extends Controller
         $settings = new StoreSettings();
         $settings = $settings->findOrCreate();
 
+        $promo = NULL;
+        $promoApplied = false;
+        $totalPromoDiscount = 0;
+        if (isset($request->promo_code)) {
+            $promo = PromoCode::where('code', $request->promo_code)->get();
+            if (count($promo) == 0) {
+                return redirect()->back()->withErrors(['message' => "Invalid Promo Code"]);
+            }
+            $promo = $promo[0];
+            $startDate = Carbon::createFromFormat('Y-m-d H:i:s',  $promo->start_date);;
+            $endDate = Carbon::createFromFormat('Y-m-d H:i:s',  $promo->end_date);
+            $now = Carbon::now();
+            if ($now->gt($endDate) || $now->lt($startDate)) {
+                return redirect()->back()->withErrors(['message' => "Promo Code is Inactive or Expired"]);
+            }
+            $promo->products = ($promo->products) ? json_decode($promo->products) : [];
+            $promo->categories = ($promo->categories) ? json_decode($promo->categories) : [];
+            $promoApplied = true;
+        }
         $products = Product::whereIn('id', $productIds)->select('id', 'name', 'price', 'quantity', 'shippingType', 'shipping_fees', 'enable_discount', 'discount')->get();
         for ($i = 0; $i < count($products); $i++) {
             $products[$i]->bought_qty = $request->products[$products[$i]->id]['quantity'];
             if ($products[$i]->bought_qty > $products[$i]->quantity) {
                 return redirect()->route('store.cart')->withErrors(['message' => "Not Enough in Stock"]);
+            }
+            $productApplicable = false;
+            $promoDiscount = 0;
+            if ($promo) {
+                switch ($promo->applicability) {
+                    case 'all':
+                        $productApplicable = true;
+                        break;
+                    case 'some':
+                        if (array_search($products[$i]->id, $promo->products) !== false) {
+                            $productApplicable = true;
+                        }
+                        break;
+                    case 'categories':
+                        if (array_search($products[$i]->category, $promo->categories) !== false) {
+                            $productApplicable = true;
+                        }
+                        break;
+                }
+                $products[$i]->promo_applicable = $productApplicable;
+                if ($productApplicable) {
+                    if ($promo->discount_type == "percentage") {
+                        $promoDiscount = ($products[$i]->price * $promo->discount) / 100;
+                    } elseif ($promo->discount_type == "ammount") {
+                        $promoDiscount = $promo->discount;
+                    }
+                }
+                $totalPromoDiscount += $promoDiscount * $products[$i]->bought_qty;
             }
             if ($products[$i]->enable_discount) {
                 $products[$i]->final_price = $products[$i]->price - ($products[$i]->price * $products[$i]->discount) / 100;
@@ -188,7 +288,8 @@ class StoreController extends Controller
                 'price' => $products[$i]->price,
                 'final_price' => isset($products[$i]->final_price) ? $products[$i]->final_price : $products[$i]->price,
                 'quantity' => $products[$i]->bought_qty,
-                'shipping_fees' => $productShipping
+                'shipping_fees' => $productShipping,
+                'promoApplied' => ($promoApplied) ? $products[$i]->promo_applicable : false,
             ];
         }
         $cityShippings = CityShipping::all();
@@ -207,24 +308,19 @@ class StoreController extends Controller
             'customer_message' => $request->message,
             'payment_method' => $request->payment,
             'shipping_fees' => $totalShipping,
+            'promo_applied' => $promoApplied,
+            'promo_discount' => $totalPromoDiscount,
+            'promo_code' => ($promoApplied) ? $promo->code : '',
             'sub_total' => $total,
-            'total' => $total + $totalShipping,
+            'total' => $total + $totalShipping - $totalPromoDiscount,
         );
 
         $order = Order::create($orderData);
-
-        $cases = [];
-        $ids = [];
-        $params = [];
-        foreach ($products as $product) {
-            $cases[] = "WHEN {$product->id} then ?";
-            $params[] = $product->quantity - $product->bought_qty;
-            $ids[] = $product->id;
+        if ($promoApplied) {
+            PromoCodeOrder::create(array('order' => $order->id, 'promo_code' => $promo->id));
         }
-        $ids = implode(',', $ids);
-        $cases = implode(' ', $cases);
         $productsToUpdate = new Product;
-        $productsToUpdate->decreaseQuantity($ids, $params, $cases);
+        $productsToUpdate->decreaseQuantity($products);
         // Change Product Quantities
         $orderStatusData = array(
             'status' => 'placed',

@@ -194,6 +194,7 @@
                     <div class="col-md-4 ">
                         <div class="sp-loading"><img src="{{asset('images/sp-loading.gif')}}" alt=""><br>LOADING IMAGES</div>
                         <div class="sp-wrap">
+
                             @foreach($images as $image)
                             <a href="{{route('store.product.image', [$image->id])}}">
                                 <img id="img-{{$image->id}}" src="{{route('store.product.image', [$image->id])}}" alt="">
@@ -201,18 +202,20 @@
                             @endforeach
                             <!-- <a href="images/edit6.png"><img src="images/edit6.png" alt=""></a> -->
                         </div>
-
-
                     </div>
                     <div class="col-md-6">
                         <div class="inner-box-desc">
                             <div class="product-label form-group">
                                 @if(($product->enable_discount))
-                                <span class="off bg-success">{{$product->discount}}% OFF</span>
+                                <div>
+                                    <span class="off bg-success" style="position: relative !important;">{{$product->discount}}% OFF</span>
+                                </div>
                                 @endif
                                 <div class="product_page_price price" style="padding: 16px;" itemprop="offerDetails" itemscope="" itemtype="">
                                     @if(isset($product->final_price))
+                                    @if(($product->enable_discount))
                                     <del style="font-size:30px; font-weight: 700;">{{ number_format($product->price,2)}}</del>
+                                    @endif
                                     <div>
                                         <span style="font-size:40px; font-weight: 700; color: #f36c1e;" class="price-new">
                                             {{ number_format($product->final_price,2)}} EGP
