@@ -79,7 +79,7 @@ class PromoCodesController extends Controller
 
         $final = [];
         foreach ($parents as $key => $value) {
-            $cat = array('id' => $value->id, 'name' => $value->name, 'subCategories' => []);
+            $cat = array('id' => $value->id, 'name' => $value->name, 'subCategories' => [], 'html' => '');
             $cat = $this->getSubCategories($subCategoires, $cat);
             array_push($final, $cat);
         }
@@ -180,7 +180,7 @@ class PromoCodesController extends Controller
 
         $final = [];
         foreach ($parents as $key => $value) {
-            $cat = array('id' => $value->id, 'name' => $value->name, 'subCategories' => []);
+            $cat = array('id' => $value->id, 'name' => $value->name, 'subCategories' => [], 'html' => '');
             $cat = $this->getSubCategories($subCategoires, $cat, $data->categories);
             array_push($final, $cat);
         }
