@@ -74,18 +74,29 @@ class Product extends Model
                     '=',
                     DB::raw('(select min(id) from product_images where product = pi.product)')
                 );
-        })->when($categories !== null && !empty($categories), function ($query) use ($categories) {
-            return $query->whereIn('category', $categories);
         })
+            ->when($categories !== null && !empty($categories), function ($query) use ($categories) {
+                return $query->where(function ($query) use ($categories) {
+                    $query->whereIn('category', $categories);
+                    $query->when(in_array(0, $categories), function ($query) use ($categories) {
+                        return $query->orWhereNull('category');
+                    });
+                });
+            })
             ->when($brands !== null && !empty($brands), function ($query) use ($brands) {
-                return $query->whereIn('brand', $brands);
+                return $query->where(function ($query) use ($brands) {
+                    $query->whereIn('brand', $brands);
+                    $query->when(in_array(0, $brands), function ($query) use ($brands) {
+                        return $query->orWhereNull('brand');
+                    });
+                });
             })->when($from !== null, function ($query) use ($from) {
                 return $query->where('price', '>=', $from);
             })->when($to !== null, function ($query) use ($to) {
                 return $query->where('price', '<=', $to);
             })
             ->select('products.*', 'pi.image', 'pi.id as image_id')
-            ->get();
+            ->paginate(9)->withQueryString();
     }
     public function searchProducts($search, $brands, $categories, $from, $to)
     {
@@ -103,16 +114,26 @@ class Product extends Model
                 $query->orWhere('description', 'LIKE', '%' . $search . '%');
             })
             ->when($categories !== null && !empty($categories), function ($query) use ($categories) {
-                return $query->whereIn('category', $categories);
+                return $query->where(function ($query) use ($categories) {
+                    $query->whereIn('category', $categories);
+                    $query->when(in_array(0, $categories), function ($query) use ($categories) {
+                        return $query->orWhereNull('category');
+                    });
+                });
             })
             ->when($brands !== null && !empty($brands), function ($query) use ($brands) {
-                return $query->whereIn('brand', $brands);
+                return $query->where(function ($query) use ($brands) {
+                    $query->whereIn('brand', $brands);
+                    $query->when(in_array(0, $brands), function ($query) use ($brands) {
+                        return $query->orWhereNull('brand');
+                    });
+                });
             })->when($from !== null, function ($query) use ($from) {
                 return $query->where('price', '>=', $from);
             })->when($to !== null, function ($query) use ($to) {
                 return $query->where('price', '<=', $to);
             })
-            ->select('products.*', 'pi.image', 'pi.id as image_id')->get();
+            ->select('products.*', 'pi.image', 'pi.id as image_id')->paginate(9)->withQueryString();
     }
     public function getRelatedProducts($category, $ids)
     {
