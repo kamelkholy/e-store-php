@@ -15,6 +15,7 @@ use App\Models\ProductImages;
 use App\Models\ProductTags;
 use App\Models\CityShipping;
 use App\Models\FeaturedCategory;
+use App\Models\FeaturedImage;
 use App\Models\Order;
 use App\Models\OrderStatus;
 use App\Models\PcBuildSettings;
@@ -39,6 +40,7 @@ class StoreController extends Controller
         $children = new CategoriesLinker();
         $children = $children->getChildren(($parents));
         $sliders = Slider::all()->sortBy('sortOrder');
+        $featuredImages = FeaturedImage::all()->sortBy('sortOrder');
         $featuredCategories = FeaturedCategory::leftJoin('categories as c', 'category', '=', 'c.id')
             ->leftJoin('products as p', 'featured_product', '=', 'p.id')
             ->leftJoin('product_images as pi', function ($q) {
@@ -68,7 +70,7 @@ class StoreController extends Controller
             }
             $value->products = $products;
         }
-        return view('store', ['featuredCategories' => $featuredCategories, 'sliders' => $sliders, 'brands' => $brands, 'parents' => $parentsData, 'children' => $children]);
+        return view('store', ['featuredCategories' => $featuredCategories, 'sliders' => $sliders, 'featuredImages' => $featuredImages, 'brands' => $brands, 'parents' => $parentsData, 'children' => $children]);
     }
     function cart()
     {

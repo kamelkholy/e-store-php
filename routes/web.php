@@ -50,6 +50,7 @@ Route::resource('customers', 'App\Http\Controllers\CustomersController')->middle
 Route::resource('brands', 'App\Http\Controllers\BrandsController')->middleware('auth');
 Route::resource('featuredCategories', 'App\Http\Controllers\FeaturedCategoriesController')->middleware('auth');
 Route::resource('sliders', 'App\Http\Controllers\SlidersController')->middleware('auth');
+Route::resource('featuredImages', 'App\Http\Controllers\FeaturedImagesController')->middleware('auth');
 Route::resource('tags', 'App\Http\Controllers\TagsController')->middleware('auth');
 Route::resource('orders', 'App\Http\Controllers\OrdersController')->middleware('auth');
 Route::resource('products', 'App\Http\Controllers\ProductsController')->middleware('auth');
