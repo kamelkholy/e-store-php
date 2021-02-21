@@ -18,9 +18,13 @@ class PromoCodesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    function index()
+    function index(Request $request)
     {
-        $data = PromoCode::sortable()->paginate(10)->withQueryString();
+        if ($request->query('search_key')) {
+            $data = (new PromoCode())->search($request->query('search_key'))->sortable()->paginate(10)->withQueryString();
+        } else {
+            $data = PromoCode::sortable()->paginate(10)->withQueryString();
+        }
         $promoUsage = PromoCodeOrder::select('promo_code', DB::raw('count(*) as total'))->groupBy('promo_code')->get();
         foreach ($data as $key => $value) {
             $index = array_search($value->id, array_column($promoUsage->toArray(), 'promo_code'));

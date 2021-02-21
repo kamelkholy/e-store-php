@@ -16,4 +16,8 @@ class CityShipping extends Model
         'shipping_fees',
     ];
     protected $fillable = ['name', 'shipping_fees'];
+    public function search($key)
+    {
+        return $this->where('name', 'LIKE', '%' . $key . '%');
+    }
 }

@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
-use App\Models\Brand;
+use App\Models\FeaturedImage;
 use Image;
 
-class BrandsController extends Controller
+class FeaturedImagesController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,11 +17,11 @@ class BrandsController extends Controller
     function index(Request $request)
     {
         if ($request->query('search_key')) {
-            $data = (new Brand())->search($request->query('search_key'))->sortable()->paginate(10)->withQueryString();
+            $data = (new FeaturedImage())->search($request->query('search_key'))->sortable()->paginate(10)->withQueryString();
         } else {
-            $data = Brand::sortable()->paginate(10)->withQueryString();
+            $data = FeaturedImage::sortable()->paginate(10)->withQueryString();
         }
-        return view('brands.list', compact('data'));
+        return view('featuredImages.list', compact('data'));
     }
 
 
@@ -32,7 +32,7 @@ class BrandsController extends Controller
      */
     public function create()
     {
-        return view('brands.create');
+        return view('featuredImages.create');
     }
 
     /**
@@ -44,24 +44,25 @@ class BrandsController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'  => 'required',
-            'name_ar'  => 'required',
             'sortOrder'  => 'integer|nullable',
             'image' => 'required|image|max:2048'
         ]);
+        $count = FeaturedImage::count();
+        if ($count == 4) {
+            return redirect()->back()->withErrors(['message' => "Only Four Images are Allowed"]);
+        }
         $image_file = $request->image;
         $image = Image::make($image_file);
         Response::make($image->encode('jpeg'));
         $form_data = array(
-            'name'  => $request->name,
-            'name_ar'  => $request->name_ar,
+            'title'  => $request->title,
             'image' => $image,
         );
         if (isset($request->sortOrder)) {
             $form_data['sortOrder'] = $request->sortOrder;
         }
-        Brand::create($form_data);
-        return redirect()->back()->with('success', 'Brand Created Successfully');
+        FeaturedImage::create($form_data);
+        return redirect()->back()->with('success', 'FeaturedImage Created Successfully');
     }
 
     /**
@@ -72,7 +73,7 @@ class BrandsController extends Controller
      */
     public function show($id)
     {
-        $image = Brand::findOrFail($id);
+        $image = FeaturedImage::findOrFail($id);
         $image_file = Image::make($image->image);
         $response = Response::make($image_file->encode('jpeg'));
         $response->header('Content-Type', 'image/jpeg');
@@ -87,8 +88,8 @@ class BrandsController extends Controller
      */
     public function edit($id)
     {
-        $data = Brand::findOrFail($id);
-        return view('brands.edit', compact('data'));
+        $data = FeaturedImage::findOrFail($id);
+        return view('featuredImages.edit', compact('data'));
     }
 
     /**
@@ -101,26 +102,22 @@ class BrandsController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name'  => 'required',
-            'name_ar'  => 'required',
             'sortOrder'  => 'integer|nullable',
             'image' => 'image|max:2048'
         ]);
-        $brand = Brand::findOrFail($id);
-        $brand->name = $request->name;
-        $brand->name_ar = $request->name_ar;
-        if (isset($request->sortOrder)) {
-            $brand->sortOrder = $request->sortOrder;
-        }
+        $featuredImage = FeaturedImage::findOrFail($id);
+        $featuredImage->title = $request->title;
+        $featuredImage->sortOrder = $request->sortOrder;
+
         if (isset($request->image)) {
             $image_file = $request->image;
             $image = Image::make($image_file);
             Response::make($image->encode('jpeg'));
-            $brand->image = $image;
+            $featuredImage->image = $image;
         }
 
-        $brand->save();
-        return redirect('/brands')->with('success', 'Brand Updated Successfully');
+        $featuredImage->save();
+        return redirect('/featuredImages')->with('success', 'FeaturedImage Updated Successfully');
     }
 
     /**
@@ -131,9 +128,9 @@ class BrandsController extends Controller
      */
     public function destroy($id)
     {
-        $brand = Brand::findOrFail($id);
+        $featuredImage = FeaturedImage::findOrFail($id);
 
-        $brand->delete();
-        return redirect('/brands')->with('success', 'Brand Updated Successfully');
+        $featuredImage->delete();
+        return redirect('/featuredImages')->with('success', 'FeaturedImage Updated Successfully');
     }
 }

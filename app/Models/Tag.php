@@ -17,4 +17,8 @@ class Tag extends Model
         'sortOrder',
     ];
     protected $fillable = ['name', 'name_ar', 'sortOrder'];
+    public function search($key)
+    {
+        return $this->where('name', 'LIKE', '%' . $key . '%')->orWhere('name_ar', 'LIKE', '%' . $key . '%');
+    }
 }

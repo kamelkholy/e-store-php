@@ -137,6 +137,15 @@
                         <li class="{{ request()->routeIs('storeSettings.index') ? 'active' : ''  }}">
                             <a href="{{route('storeSettings.index')}}">Store Settings</a>
                         </li>
+                        <li class="{{ request()->routeIs('sliders.index') ? 'active' : ''  }}">
+                            <a href="{{route('sliders.index')}}">Sliders</a>
+                        </li>
+                        <li class="{{ request()->routeIs('featuredImages.index') ? 'active' : ''  }}">
+                            <a href="{{route('featuredImages.index')}}">Featured Images</a>
+                        </li>
+                        <li class="{{ request()->routeIs('featuredCategories.index') ? 'active' : ''  }}">
+                            <a href="{{route('featuredCategories.index')}}">Featured Categories</a>
+                        </li>
                         <li class="{{ request()->routeIs('users.index') ? 'active' : ''  }}">
                             <a href="{{route('users.index')}}">Users</a>
                         </li>
@@ -146,12 +155,7 @@
                         <li class="{{ request()->routeIs('cityShippings.index') ? 'active' : ''  }}">
                             <a href="{{route('cityShippings.index')}}">City Shipping</a>
                         </li>
-                        <li class="{{ request()->routeIs('sliders.index') ? 'active' : ''  }}">
-                            <a href="{{route('sliders.index')}}">Sliders</a>
-                        </li>
-                        <li class="{{ request()->routeIs('featuredCategories.index') ? 'active' : ''  }}">
-                            <a href="{{route('featuredCategories.index')}}">Featured Categories</a>
-                        </li>
+
                         <li class="{{ request()->routeIs('promoCodes.index') ? 'active' : ''  }}">
                             <a href="{{route('promoCodes.index')}}">Promo Codes</a>
                         </li>

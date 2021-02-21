@@ -30,4 +30,8 @@ class PromoCode extends Model
         'products',
         'categories',
     ];
+    public function search($key)
+    {
+        return $this->where('code', 'LIKE', '%' . $key . '%');
+    }
 }

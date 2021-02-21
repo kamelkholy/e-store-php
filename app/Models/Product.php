@@ -154,4 +154,8 @@ class Product extends Model
             ->select('products.*', 'pi.image', 'pi.id as image_id')
             ->get();
     }
+    public function search($key)
+    {
+        return $this->where('name', 'LIKE', '%' . $key . '%')->orWhere('name_ar', 'LIKE', '%' . $key . '%');
+    }
 }

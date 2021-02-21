@@ -48,4 +48,8 @@ class Customer extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function search($key)
+    {
+        return $this->where('name', 'LIKE', '%' . $key . '%')->orWhere('email', 'LIKE', '%' . $key . '%');
+    }
 }

@@ -27,4 +27,8 @@ class Category extends Model
         //do whatever you want to do
         return $category;
     }
+    public function search($key)
+    {
+        return $this->where('name', 'LIKE', '%' . $key . '%')->orWhere('name_ar', 'LIKE', '%' . $key . '%');
+    }
 }

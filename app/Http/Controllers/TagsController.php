@@ -12,9 +12,14 @@ class TagsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    function index()
+    function index(Request $request)
     {
-        $data = Tag::sortable()->paginate(10)->withQueryString();
+        if ($request->query('search_key')) {
+            $data = (new Tag())->search($request->query('search_key'))->sortable()->paginate(10)->withQueryString();
+        } else {
+            $data = Tag::sortable()->paginate(10)->withQueryString();
+        }
+
         return view('tags.list', compact('data'));
     }
 

@@ -16,4 +16,8 @@ class Type extends Model
         'sortOrder',
     ];
     protected $fillable = ['specifications', 'name', 'name_ar', 'sortOrder',];
+    public function search($key)
+    {
+        return $this->where('name', 'LIKE', '%' . $key . '%')->orWhere('name_ar', 'LIKE', '%' . $key . '%');
+    }
 }

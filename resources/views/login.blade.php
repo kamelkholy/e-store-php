@@ -55,7 +55,7 @@
                                 <input type="password" name="password" id="password" class="form-control">
                             </div>
                             <div class="form-group">
-                                <input type="submit" name="submit" style="color:#97a5e3;" class="btn btn-md" value="submit">
+                                <input type="submit" name="submit" style="color:#97a5e3;" class="btn btn-md" value="LOGIN">
                             </div>
                         </form>
                     </div>

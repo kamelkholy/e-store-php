@@ -35,4 +35,8 @@ class Build extends Model
         'mouse',
         'headphone',
     ];
+    public function search($key)
+    {
+        return $this->where('build_name', 'LIKE', '%' . $key . '%');
+    }
 }

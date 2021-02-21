@@ -22,9 +22,13 @@ class ProductsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    function index()
+    function index(Request $request)
     {
-        $data = Product::sortable()->paginate(10)->withQueryString();
+        if ($request->query('search_key')) {
+            $data = (new Product())->search($request->query('search_key'))->sortable()->paginate(10)->withQueryString();
+        } else {
+            $data = Product::sortable()->paginate(10)->withQueryString();
+        }
         return view('products.list', compact('data'));
     }
 

@@ -13,9 +13,13 @@ class OrdersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    function index()
+    function index(Request $request)
     {
-        $data = Order::sortable()->paginate(10)->withQueryString();
+        if ($request->query('search_key')) {
+            $data = (new Order())->search($request->query('search_key'))->sortable()->paginate(10)->withQueryString();
+        } else {
+            $data = Order::sortable()->paginate(10)->withQueryString();
+        }
         return view('orders.list', compact('data'));
     }
 

@@ -15,8 +15,8 @@
                         <div class="col pl-0">
                             <a href="{{route('orders.create')}}" class="btn btn-primary"> Add New</a>
                         </div>
-                        <form class="form-inline my-2 my-lg-0">
-                            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                        <form action="{{route('orders.index')}}" class="form-inline my-2 my-lg-0">
+                            <input name="search_key" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
                             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                         </form>
                     </div>
@@ -44,7 +44,6 @@
                                 <th>@sortablelink('first_name', 'First Name')</th>
                                 <th>@sortablelink('last_name', 'Last Name')</th>
                                 <th>@sortablelink('email', 'Email')</th>
-                                <th>@sortablelink('city', 'City')</th>
                                 <th>@sortablelink('status', 'Order Status')</th>
                                 <th>@sortablelink('total', 'Total')</th>
                                 <th>Actions</th>
@@ -62,7 +61,6 @@
                                 <td class="align-middle">{{ $row->first_name }}</td>
                                 <td class="align-middle">{{ $row->last_name }}</td>
                                 <td class="align-middle">{{ $row->email }}</td>
-                                <td class="align-middle">{{ $row->city }}</td>
                                 <td class="align-middle">{{ $row->status }}</td>
                                 <td class="align-middle">{{ $row->total }}</td>
                                 <td class="align-middle">

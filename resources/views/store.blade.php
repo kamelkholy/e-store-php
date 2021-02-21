@@ -193,19 +193,11 @@
     <section class="adds pt-3 pb-3">
         <div class="container p-0">
             <div class="row no-gutters">
+                @foreach($featuredImages as $featuredImage)
                 <div class="col-md-3 p-2">
-                    <img src="img/adds/adds1.jpg" alt="" height="300px" class="img-fluid">
+                    <img src="data:image/png;base64,{{ chunk_split(base64_encode($featuredImage->image)) }}" alt="" height="300px" class="img-fluid">
                 </div>
-                <div class="col-md-3 p-2">
-                    <img src="img/adds/adds2.jpg" alt="" height="300px" class="img-fluid">
-                </div>
-                <div class="col-md-3 p-2">
-                    <img src="img/adds/adds3.jpg" alt="" height="300px" class="img-fluid">
-                </div>
-                <div class="col-md-3 p-2">
-                    <img src="img/adds/adds4.jpg" alt="" height="300px" class="img-fluid pl-0">
-                </div>
-
+                @endforeach
             </div>
         </div>
     </section>

@@ -15,9 +15,13 @@ class TypeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    function index(Request $request)
     {
-        $data = Type::sortable()->paginate(10)->withQueryString();
+        if ($request->query('search_key')) {
+            $data = (new Type())->search($request->query('search_key'))->sortable()->paginate(10)->withQueryString();
+        } else {
+            $data = Type::sortable()->paginate(10)->withQueryString();
+        }
         return view('types.list', compact('data'));
     }
 

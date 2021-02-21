@@ -8,6 +8,7 @@ use Kyslik\ColumnSortable\Sortable;
 
 class Brand extends Model
 {
+    use HasFactory;
     use Sortable;
 
     public $sortable = [
@@ -17,5 +18,8 @@ class Brand extends Model
         'sortOrder',
     ];
     protected $fillable = ['name', 'name_ar', 'sortOrder', 'image'];
-    use HasFactory;
+    public function search($key)
+    {
+        return $this->where('name', 'LIKE', '%' . $key . '%')->orWhere('name_ar', 'LIKE', '%' . $key . '%');
+    }
 }

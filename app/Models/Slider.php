@@ -17,4 +17,8 @@ class Slider extends Model
         'sortOrder',
     ];
     protected $fillable = ['title', 'sortOrder', 'image'];
+    public function search($key)
+    {
+        return $this->where('title', 'LIKE', '%' . $key . '%');
+    }
 }

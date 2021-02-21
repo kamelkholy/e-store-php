@@ -17,9 +17,14 @@ class CategoriesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    function index(Request $request)
     {
-        $data = Category::sortable()->paginate(10)->withQueryString();
+        $allCategories = Category::sortable()->paginate(10)->withQueryString();
+        if ($request->query('search_key')) {
+            $data = (new Category())->search($request->query('search_key'))->sortable()->paginate(10)->withQueryString();
+        } else {
+            $data = $allCategories;
+        }
         $links = new CategoriesLinker();
         $categoriesNames = [];
         $links = $links->getAll();
@@ -29,8 +34,8 @@ class CategoriesController extends Controller
             }
             $parentToName = $value->parent;
             for ($i = 0; $i < $value->level; $i++) {
-                $index = array_search($parentToName, array_column($data->toArray()['data'], 'id'));
-                $parent = $data[$index];
+                $index = array_search($parentToName, array_column($allCategories->toArray()['data'], 'id'));
+                $parent = $allCategories[$index];
 
                 $parentToName = $parent->parent;
                 $categoriesNames[$value->id] = $parent->name . ' > ' . $categoriesNames[$value->id];

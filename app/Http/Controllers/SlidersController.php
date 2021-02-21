@@ -14,9 +14,13 @@ class SlidersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    function index()
+    function index(Request $request)
     {
-        $data = Slider::sortable()->paginate(10)->withQueryString();
+        if ($request->query('search_key')) {
+            $data = (new Slider())->search($request->query('search_key'))->sortable()->paginate(10)->withQueryString();
+        } else {
+            $data = Slider::sortable()->paginate(10)->withQueryString();
+        }
         return view('sliders.list', compact('data'));
     }
 

@@ -12,9 +12,13 @@ class CityShippingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    function index()
+    function index(Request $request)
     {
-        $data = CityShipping::sortable()->paginate(10)->withQueryString();
+        if ($request->query('search_key')) {
+            $data = (new CityShipping())->search($request->query('search_key'))->sortable()->paginate(10)->withQueryString();
+        } else {
+            $data = CityShipping::sortable()->paginate(10)->withQueryString();
+        }
         return view('cityShippings.list', compact('data'));
     }
 

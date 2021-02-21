@@ -40,4 +40,8 @@ class Order extends Model
         'sub_total',
         'total',
     ];
+    public function search($key)
+    {
+        return $this->where('first_name', 'LIKE', '%' . $key . '%')->orWhere('last_name', 'LIKE', '%' . $key . '%')->orWhere('email', 'LIKE', '%' . $key . '%')->orWhere('id', $key);
+    }
 }
