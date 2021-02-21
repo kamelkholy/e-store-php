@@ -17,6 +17,7 @@ use App\Models\CityShipping;
 use App\Models\FeaturedCategory;
 use App\Models\Order;
 use App\Models\OrderStatus;
+use App\Models\PcBuildSettings;
 use App\Models\PromoCode;
 use App\Models\PromoCodeOrder;
 use App\Models\Slider;
@@ -119,6 +120,10 @@ class StoreController extends Controller
             if ($products[$i]->bought_qty > $products[$i]->quantity) {
                 return redirect()->back()->withErrors(['message' => "Not Enough in Stock"]);
             }
+            if (!$products[$i]->price) {
+                return redirect()->back()->withErrors(['message' => "Please Contact The Store Owner About Ordering The Item: " . $products[$i]->name]);
+            }
+
             $productApplicable = false;
             $promoDiscount = 0;
             if ($promo) {
@@ -345,6 +350,51 @@ class StoreController extends Controller
         $children = $children->getChildren(($parents));
 
         return view('store.compare', ['brands' => $brands, 'parents' => $parentsData, 'children' => $children]);
+    }
+    function pcBuild()
+    {
+
+        $brands = Brand::all();
+        $parentsData = Category::where('level', 0)->orderBy('sortOrder')->get();
+        $parents = array();
+        foreach ($parentsData as $key => $value) {
+            array_push($parents, $value->id);
+        }
+        $children = new CategoriesLinker();
+        $children = $children->getChildren(($parents));
+
+        $pcBuildSettings = new PcBuildSettings();
+        $pcBuildSettings = $pcBuildSettings->findOrCreate();
+        $categories = [];
+        $components = array();
+        foreach ($pcBuildSettings->toArray() as $key => $value) {
+            if (!in_array($key, array("id", "created_at", "updated_at"))) {
+                array_push($categories, $value);
+                $components[$value] = [];
+            }
+        }
+        $products = Product::leftJoin('types as t', 'products.type', '=', 't.id')
+            ->leftJoin('brands as b', 'products.brand', '=', 'b.id')
+            ->leftJoin('product_images as pi', function ($q) {
+                $q->on('pi.product', '=', 'products.id')
+                    ->on(
+                        'pi.id',
+                        '=',
+                        DB::raw('(select min(id) from product_images where product = pi.product)')
+                    );
+            })
+            ->whereIn('category', $categories)->select('products.id', 'products.name', 'products.description', 'products.price', 'products.category', 'b.name as brand_name', 'pi.id as image_id')->get();
+        foreach ($products as $key => $value) {
+            $index = array_search($value->category, array_column($components, 'category'));
+            array_push($components[$value->category], $value);
+        }
+        return view('store.pcBuild', [
+            'components' => $components,
+            'pcBuildSettings' => $pcBuildSettings,
+            'brands' => $brands,
+            'parents' => $parentsData,
+            'children' => $children
+        ]);
     }
     function compareProducts(Request $request)
     {
