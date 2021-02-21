@@ -80,7 +80,7 @@
                     <img src="{{asset('img/shopping-cart.png')}}" style="width: 20px; margin-left: 25px;" alt="">
                     <span id="cart-count" class="badge">0</span>
                 </a>
-                <a href="#">
+                <a href="#" id="customer">
                     <img src="{{asset('img/support.png')}}" style="width: 25px;" alt="">
 
                 </a>
@@ -109,6 +109,16 @@
                         <a href="{{route('store.cart')}}" class="button"> عرض الكل</a>
                     </div>
                     <!--end shopping-cart -->
+                    <div class="customer-list" style="padding: 0;">
+                        <ul class="list-group" style="padding: 0;">
+                            <a href="{{route('builds.index')}}" class="list-group-item list-group-item-action">
+                                My Builds
+                            </a>
+                            <a href="{{route('store.pcBuild')}}" class="list-group-item list-group-item-action">
+                                Build A PC
+                            </a>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -141,41 +151,7 @@
                         @endif
                     </li>
                     @endforeach
-                    <li><a href="#">اجهزه اللاب توب</a>
-                        <ul>
-                            <li><a href="#">School</a>
-                                <ul>
-                                    <li><a href="#">Lidership</a></li>
-                                    <li><a href="#">History</a></li>
-                                    <li><a href="#">Locations</a></li>
-                                    <li><a href="#">Careers</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="#">Study</a>
-                                <ul>
-                                    <li><a href="#">Undergraduate</a></li>
-                                    <li><a href="#">Masters</a></li>
-                                    <li><a href="#">International</a></li>
-                                    <li><a href="#">Online</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="#">Research</a>
-                                <ul>
-                                    <li><a href="#">Undergraduate research</a></li>
-                                    <li><a href="#">Masters research</a></li>
-                                    <li><a href="#">Funding</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="#">Something</a>
-                                <ul>
-                                    <li><a href="#">Sub something</a></li>
-                                    <li><a href="#">Sub something</a></li>
-                                    <li><a href="#">Sub something</a></li>
-                                    <li><a href="#">Sub something</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
+
                 </ul>
             </div>
         </div>
@@ -663,6 +639,10 @@
             e.stopPropagation();
             $(".shopping-cart").toggleClass("active");
         });
+        $('#customer').click(function(e) {
+            e.stopPropagation();
+            $(".customer-list").toggleClass("active");
+        });
         $(window).load(function() {
             $('.sp-wrap').smoothproducts();
         });
@@ -725,7 +705,7 @@
                 if (type != compare.type) {
                     toastr.error("Compare List Must Have The Same Type");
                 } else if (compare.products.length === 3) {
-                    toastr.error("Compare List Must Have The Same Type");
+                    toastr.error("Compare List Limit is 3");
                 } else {
                     if (compare.products.indexOf(product) < 0) {
                         compare.products.push(product);
@@ -735,7 +715,7 @@
             } else {
                 compare.type = type;
                 if (compare.products.length === 3) {
-                    toastr.error("Compare List Must Have The Same Type");
+                    toastr.error("Compare List Limit is 3");
                 } else {
                     if (compare.products.indexOf(product) < 0) {
                         compare.products.push(product)

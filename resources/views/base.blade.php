@@ -90,7 +90,7 @@
                     <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/store">Store</a>
+                    <a class="nav-link" href="{{route('store')}}">Store</a>
                 </li>
             </ul>
         </div>
@@ -154,6 +154,9 @@
                         </li>
                         <li class="{{ request()->routeIs('promoCodes.index') ? 'active' : ''  }}">
                             <a href="{{route('promoCodes.index')}}">Promo Codes</a>
+                        </li>
+                        <li class="{{ request()->routeIs('pcBuildSettings.index') ? 'active' : ''  }}">
+                            <a href="{{route('pcBuildSettings.index')}}">PC Build Settings</a>
                         </li>
                     </ul>
                 </li>

@@ -77,7 +77,7 @@
                     <img src="{{asset('img/shopping-cart.png')}}" style="width: 20px; margin-left: 25px;" alt="">
                     <span id="cart-count" class="badge">0</span>
                 </a>
-                <a href="#">
+                <a href="#" id="customer">
                     <img src="{{asset('img/support.png')}}" style="width: 25px;" alt="">
                 </a>
 
@@ -96,6 +96,16 @@
                         <a href="{{route('store.cart')}}" class="button"> عرض الكل</a>
                     </div>
                     <!--end shopping-cart -->
+                    <div class="customer-list" style="padding: 0;">
+                        <ul class="list-group" style="padding: 0;">
+                            <a href="{{route('builds.index')}}" class="list-group-item list-group-item-action">
+                                My Builds
+                            </a>
+                            <a href="{{route('store.pcBuild')}}" class="list-group-item list-group-item-action">
+                                Build A PC
+                            </a>
+                        </ul>
+                    </div>
                 </div>
 
             </div>

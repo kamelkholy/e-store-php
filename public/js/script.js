@@ -275,6 +275,10 @@ $(document).ready(function () {
         e.stopPropagation();
         $(".shopping-cart").toggleClass("active");
     });
+    $('#customer').click(function (e) {
+        e.stopPropagation();
+        $(".customer-list").toggleClass("active");
+    });
 
     $('#addtocart').click(function (e) {
         e.stopPropagation();
