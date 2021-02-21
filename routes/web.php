@@ -23,6 +23,7 @@ Route::get('/store/cart', ['App\Http\Controllers\StoreController', 'cart'])->nam
 Route::post('/store/checkout', ['App\Http\Controllers\StoreController', 'checkout'])->name('store.checkout');
 Route::post('/store/place-order', ['App\Http\Controllers\StoreController', 'placeOrder'])->name('store.placeOrder');
 Route::get('/store/compare', ['App\Http\Controllers\StoreController', 'compare'])->name('store.compare');
+Route::get('/store/pc-build', ['App\Http\Controllers\StoreController', 'pcBuild'])->name('store.pcBuild');
 Route::post('/store/compare', ['App\Http\Controllers\StoreController', 'compareProducts'])->name('store.compareProducts');
 Route::post('/store/refresh-cart', ['App\Http\Controllers\StoreController', 'refreshCart'])->name('store.refreshCart');
 Route::get('store/products', ['App\Http\Controllers\StoreController', 'products'])->name('store.products');
@@ -30,7 +31,9 @@ Route::get('store/products/{id}', ['App\Http\Controllers\StoreController', 'apro
 Route::get('store/products-images/{id}', ['App\Http\Controllers\StoreController', 'showProductImage'])->name('store.product.image');
 Route::get('store/cart-product/{id}', ['App\Http\Controllers\StoreController', 'getCartProduct'])->name('store.cart.product');
 Route::get('store/products/category/{id}', ['App\Http\Controllers\StoreController', 'productsByCategory'])->name('store.products.category');
-Route::get('/store-categories', ['App\Http\Controllers\CategoriesController', 'getForStore']);
+Route::resource('store/builds', 'App\Http\Controllers\BuildsController');
+Route::post('/store/builds/compare', ['App\Http\Controllers\BuildsController', 'compare'])->name('builds.compare');
+
 
 
 Route::get('/admin', function () {
@@ -54,6 +57,7 @@ Route::resource('categories', 'App\Http\Controllers\CategoriesController')->midd
 Route::resource('types', 'App\Http\Controllers\TypeController')->middleware('auth');
 Route::resource('cityShippings', 'App\Http\Controllers\CityShippingController')->middleware('auth');
 Route::resource('storeSettings', 'App\Http\Controllers\StoreSettingController')->middleware('auth');
+Route::resource('pcBuildSettings', 'App\Http\Controllers\PcBuildSettingController')->middleware('auth');
 Route::resource('promoCodes', 'App\Http\Controllers\PromoCodesController')->middleware('auth');
 
 Route::post('/orders/{id}/change-status', ['App\Http\Controllers\OrdersController', 'changeStatus'])->middleware('auth')->name('orders.changeStatus');
