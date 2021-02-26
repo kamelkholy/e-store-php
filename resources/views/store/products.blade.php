@@ -102,12 +102,7 @@
                     <!--end shopping-cart -->
                     <div class="customer-list" style="padding: 0;">
                         <ul class="list-group" style="padding: 0;">
-                            <a href="{{route('builds.index')}}" class="list-group-item list-group-item-action">
-                                My Builds
-                            </a>
-                            <a href="{{route('store.pcBuild')}}" class="list-group-item list-group-item-action">
-                                Build A PC
-                            </a>
+
                         </ul>
                     </div>
                 </div>
