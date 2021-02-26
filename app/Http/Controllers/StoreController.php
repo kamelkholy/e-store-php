@@ -14,6 +14,7 @@ use App\Models\CategoriesLinker;
 use App\Models\ProductImages;
 use App\Models\ProductTags;
 use App\Models\CityShipping;
+use App\Models\DailyOffer;
 use App\Models\FeaturedCategory;
 use App\Models\FeaturedImage;
 use App\Models\Order;
@@ -41,6 +42,35 @@ class StoreController extends Controller
         $children = $children->getChildren(($parents));
         $sliders = Slider::all()->sortBy('sortOrder');
         $featuredImages = FeaturedImage::all()->sortBy('sortOrder');
+
+        $now = Carbon::now();
+        $dailyOffers = DailyOffer::whereDate('start_date', '<=', $now)->whereDate('end_date', '>=', $now)->get();
+        $dailyOffer = count($dailyOffers) > 0 ? $dailyOffers[0] : NULL;
+        if ($dailyOffer) {
+            $dailyIds = json_decode($dailyOffer->products);
+            $dailyProducts = Product::leftJoin('product_images as pi', function ($q) {
+                $q->on('pi.product', '=', 'products.id')
+                    ->on(
+                        'pi.id',
+                        '=',
+                        DB::raw('(select min(id) from product_images where product = pi.product)')
+                    );
+            })
+                ->whereIn('products.id', $dailyIds)
+                ->limit(2)
+                ->select('products.*', 'pi.image', 'pi.id as image_id')
+                ->get();
+            for ($i = 0; $i < count($dailyProducts); $i++) {
+                if ($dailyProducts[$i]->enable_discount) {
+                    $dailyProducts[$i]->final_price = $dailyProducts[$i]->price - ($dailyProducts[$i]->price * $dailyProducts[$i]->discount) / 100;
+                }
+            }
+            $dailyOffer->products = $dailyProducts;
+            $endDate = Carbon::createFromFormat('Y-m-d H:i:s',  $dailyOffer->end_date);;
+            $dailyOffer->remaining = $endDate->diff($now);
+        }
+
+
         $featuredCategories = FeaturedCategory::leftJoin('categories as c', 'category', '=', 'c.id')
             ->leftJoin('products as p', 'featured_product', '=', 'p.id')
             ->leftJoin('product_images as pi', function ($q) {
@@ -70,7 +100,8 @@ class StoreController extends Controller
             }
             $value->products = $products;
         }
-        return view('store', ['featuredCategories' => $featuredCategories, 'sliders' => $sliders, 'featuredImages' => $featuredImages, 'brands' => $brands, 'parents' => $parentsData, 'children' => $children]);
+
+        return view('store', ['featuredCategories' => $featuredCategories, 'dailyOffer' => $dailyOffer, 'sliders' => $sliders, 'featuredImages' => $featuredImages, 'brands' => $brands, 'parents' => $parentsData, 'children' => $children]);
     }
     function cart()
     {
@@ -521,8 +552,34 @@ class StoreController extends Controller
                 $relatedProducts[$i]->final_price = $relatedProducts[$i]->price - ($relatedProducts[$i]->price * $relatedProducts[$i]->discount) / 100;
             }
         }
+
+        $now = Carbon::now();
+        $dailyOffers = DailyOffer::whereDate('start_date', '<=', $now)->whereDate('end_date', '>=', $now)->get();
+        $dailyOffer = count($dailyOffers) > 0 ? $dailyOffers[0] : NULL;
+        if ($dailyOffer) {
+
+            $dailyIds = json_decode($dailyOffer->products);
+            $dailyProducts = Product::leftJoin('product_images as pi', function ($q) {
+                $q->on('pi.product', '=', 'products.id')
+                    ->on(
+                        'pi.id',
+                        '=',
+                        DB::raw('(select min(id) from product_images where product = pi.product)')
+                    );
+            })
+                ->whereIn('products.id', $dailyIds)
+                ->select('products.*', 'pi.image', 'pi.id as image_id')
+                ->get();
+            for ($i = 0; $i < count($dailyProducts); $i++) {
+                if ($dailyProducts[$i]->enable_discount) {
+                    $dailyProducts[$i]->final_price = $dailyProducts[$i]->price - ($dailyProducts[$i]->price * $dailyProducts[$i]->discount) / 100;
+                }
+            }
+            $dailyOffer->products = $dailyProducts;
+        }
         return view('store.aproduct', [
             'product' => $product,
+            'dailyOffer' => $dailyOffer,
             'relatedProducts' => $relatedProducts,
             'images' => $images,
             'typeSepcs' => $typeSepcs,

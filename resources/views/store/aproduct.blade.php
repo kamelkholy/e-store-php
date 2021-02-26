@@ -388,142 +388,44 @@
 
 
 
-
+    @if($dailyOffer)
     <div class="container p-0">
         <div class="box-title text-right">
             <h3><span>العروض اليومية</span></h3>
         </div>
         <div class="owl-carousel owl-theme p-3">
+            @foreach ($dailyOffer->products as $dailyProduct)
             <div class="item">
                 <div class="" style="border: 1px solid #ddd;">
                     <div class="cart-product text-center p-2">
-                        <img class="img-fluid" src="img/accessories/slider accessories/slider1.png" alt="">
+                        <img class="img-fluid" src="data:image/png;base64,{{ chunk_split(base64_encode($dailyProduct->image)) }}" alt="">
                         <div class="price-product d-flex justify-content-center align-items-center">
-                            <h5 style="color:#f36c1e; font-weight: 500;">70,00 EGP</h5>
-                            <del>100,00 EGP</del>
+                            @if(isset($dailyProduct->final_price))
+                            <del>{{ number_format($dailyProduct->price,2)}}</del>
+                            <div>
+                                <h5 style="color:#f36c1e; font-weight: 500;">{{ number_format($dailyProduct->final_price,2)}}</h5>
+                            </div>
+                            @else
+                            <h5 style="color:#f36c1e; font-weight: 500;">{{ number_format($dailyProduct->price,2)}}</h5>
+                            @endif
                         </div>
-                        <h5>Lenovo Elctronic</h5>
-
+                        <a href="{{route('store.aproduct', $dailyProduct->id)}}">
+                            <h5>{{$dailyProduct->name}}</h5>
+                        </a>
                         <div class="overlay">
-                            <i class="fas fa-cart-plus"></i>
-                            <i class="far fa-eye"></i>
-                            <i class="fas fa-heart"></i>
+                            <i onclick="addToCart('{{($dailyProduct->id)}}')" class="fas fa-cart-plus"></i>
                         </div>
-
-                        <span class="discount">-20%</span>
-
+                        @if(($dailyProduct->enable_discount))
+                        <span class="discount">-{{$dailyProduct->discount}}%</span>
+                        @endif
                     </div>
                 </div>
             </div>
-            <div class="item">
-                <div class="" style="border: 1px solid #ddd;">
-                    <div class="cart-product text-center p-2">
-                        <img class="img-fluid" src="img/accessories/slider accessories/slider2.png" alt="">
-                        <div class="price-product d-flex justify-content-center align-items-center">
-                            <h5 style="color:#f36c1e; font-weight: 500;">70,00 EGP</h5>
-                            <del>100,00 EGP</del>
-                        </div>
-                        <h5>Lenovo Elctronic</h5>
-
-                        <div class="overlay">
-                            <i class="fas fa-cart-plus"></i>
-                            <i class="far fa-eye"></i>
-                            <i class="fas fa-heart"></i>
-                        </div>
-
-                        <span class="discount">-20%</span>
-
-                    </div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="" style="border: 1px solid #ddd;">
-                    <div class="cart-product text-center p-2">
-                        <img class="img-fluid" src="img/accessories/slider accessories/slider3.png" alt="">
-                        <div class="price-product d-flex justify-content-center align-items-center">
-                            <h5 style="color:#f36c1e; font-weight: 500;">70,00 EGP</h5>
-                            <del>100,00 EGP</del>
-                        </div>
-                        <h5>Lenovo Elctronic</h5>
-
-                        <div class="overlay">
-                            <i class="fas fa-cart-plus"></i>
-                            <i class="far fa-eye"></i>
-                            <i class="fas fa-heart"></i>
-                        </div>
-
-                        <span class="discount">-20%</span>
-
-                    </div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="" style="border: 1px solid #ddd;">
-                    <div class="cart-product text-center p-2">
-                        <img class="img-fluid" src="img/accessories/slider accessories/slider4.png" alt="">
-                        <div class="price-product d-flex justify-content-center align-items-center">
-                            <h5 style="color:#f36c1e; font-weight: 500;">70,00 EGP</h5>
-                            <del>100,00 EGP</del>
-                        </div>
-                        <h5>Lenovo Elctronic</h5>
-
-                        <div class="overlay">
-                            <i class="fas fa-cart-plus"></i>
-                            <i class="far fa-eye"></i>
-                            <i class="fas fa-heart"></i>
-                        </div>
-
-                        <span class="discount">-20%</span>
-
-                    </div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="" style="border: 1px solid #ddd;">
-                    <div class="cart-product text-center p-2">
-                        <img class="img-fluid" src="img/accessories/slider accessories/slider5.png" alt="">
-                        <div class="price-product d-flex justify-content-center align-items-center">
-                            <h5 style="color:#f36c1e; font-weight: 500;">70,00 EGP</h5>
-                            <del>100,00 EGP</del>
-                        </div>
-                        <h5>Lenovo Elctronic</h5>
-
-                        <div class="overlay">
-                            <i class="fas fa-cart-plus"></i>
-                            <i class="far fa-eye"></i>
-                            <i class="fas fa-heart"></i>
-                        </div>
-
-                        <span class="discount">-20%</span>
-
-                    </div>
-                </div>
-            </div>
-            <div class="item">
-                <div class="" style="border: 1px solid #ddd;">
-                    <div class="cart-product text-center p-2">
-                        <img class="img-fluid" src="img/accessories/slider accessories/slider6.png" alt="">
-                        <div class="price-product d-flex justify-content-center align-items-center">
-                            <h5 style="color:#f36c1e; font-weight: 500;">70,00 EGP</h5>
-                            <del>100,00 EGP</del>
-                        </div>
-                        <h5>Lenovo Elctronic</h5>
-
-                        <div class="overlay">
-                            <i class="fas fa-cart-plus"></i>
-                            <i class="far fa-eye"></i>
-                            <i class="fas fa-heart"></i>
-                        </div>
-
-                        <span class="discount">-20%</span>
-
-                    </div>
-                </div>
-            </div>
+            @endforeach
 
         </div>
     </div>
-
+    @endif
     <footer dir="rtl" class="text-right sub-footer">
         <div class="container">
             <div class="row justify-content-between">

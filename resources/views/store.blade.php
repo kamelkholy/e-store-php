@@ -203,6 +203,7 @@
     </section>
 
 
+    @if($dailyOffer)
 
     <section class="deal-offer text-right mt-5" dir="rtl">
         <div class="container p-4" style="border: 1px solid #ddd;">
@@ -211,28 +212,34 @@
             </div>
 
             <div class="row">
+                @foreach ($dailyOffer->products as $dailyProduct)
                 <div class="col-md-6 mt-4">
                     <div class="row">
                         <div class="col-md-4">
-                            <img src="img/sepical count offer/sepical open count 1.jpg" class="img-fluid" alt="">
+                            <img src="data:image/png;base64,{{ chunk_split(base64_encode($dailyProduct->image)) }}" class="img-fluid" alt="">
                         </div>
                         <div class="col-md-8">
                             <div class="item-content">
                                 <h4>
-                                    <a href="" title="ut labore et do">ut labore et do</a>
+                                    <a href="{{route('store.aproduct', $dailyProduct->id)}}" title="{{$dailyProduct->name}}">{{$dailyProduct->name}}</a>
                                 </h4>
                                 Price
                                 <div class="item-price">
                                     <span class="item-price2 d-flex align-items-center">
+                                        @if(isset($dailyProduct->final_price))
                                         <h3>
-                                            90.00
+                                            {{ number_format($dailyProduct->final_price,2)}}
                                         </h3>
-                                        <del>120.00</del>
+                                        <del>{{ number_format($dailyProduct->price,2)}}</del>
+                                        @else
+                                        <h3>
+                                            {{ number_format($dailyProduct->price,2)}}
+                                        </h3>
+                                        @endif
                                     </span>
                                 </div>
-                                <div class="description">Style Code Live is a daily, live show where style enthusiasts
-                                    can connect, chat, shop, and get the inside scoop on the latest fashion and beauty
-                                    trends.
+                                <div class="description">
+                                    {!!$dailyProduct->description!!}
                                 </div>
                                 <div class="offer-counter-m d-flex justify-content-between align-items-center">
                                     <div class="count-left pull-left">
@@ -241,20 +248,14 @@
                                     </div>
                                     <div class="product-countdown pull-right">
                                         <span class="countdown-row countdown-show4 d-flex">
-                                            <span class="countdown-section days ">
-
-                                                <span class="countdown-amount d-block">458</span>
-
-                                                <span class="countdown-period">days</span>
-                                            </span>
 
                                             <span class="countdown-section  hours">
-                                                <span class="countdown-amount d-block">08</span>
+                                                <span class="countdown-amount d-block">{{$dailyOffer->remaining->h}}</span>
                                                 <span class="countdown-period">hours</span>
                                             </span>
 
 
-                                            <span class="countdown-section mins "><span class="countdown-amount d-block">10</span><span class="countdown-period">mins</span></span><span class="countdown-section secs"><span class="countdown-amount  d-block">58</span><span class="countdown-period">secs</span></span>
+                                            <span class="countdown-section mins "><span class="countdown-amount d-block">{{$dailyOffer->remaining->i}}</span><span class="countdown-period">mins</span></span><span class="countdown-section secs"><span class="countdown-amount  d-block">{{$dailyOffer->remaining->s}}</span><span class="countdown-period">secs</span></span>
                                         </span>
                                     </div>
                                 </div>
@@ -262,59 +263,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 mt-4">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <img src="img/sepical count offer/sepical open count 2.jpg" class="img-fluid" alt="">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="item-content">
-                                <h4><a href="" title="ut labore et do">ut labore et do</a></h4>
-                                Price
-                                <div class="item-price">
-                                    <span class="item-price2 d-flex align-items-center">
-                                        <h3>
-                                            90.00
-                                        </h3>
-                                        <del>120.00</del>
-                                    </span>
-                                </div>
-                                <div class="description">Style Code Live is a daily, live show where style enthusiasts
-                                    can connect, chat, shop, and get the inside scoop on the latest fashion and beauty
-                                    trends.
-                                </div>
-                                <div class="offer-counter-m d-flex justify-content-between align-items-center">
-                                    <div class="count-left pull-left">
-                                        <h2>Hurry up!</h2>
-                                        <p>Offers end in:</p>
-                                    </div>
-                                    <div class="product-countdown pull-right">
-                                        <span class="countdown-row countdown-show4 d-flex">
-                                            <span class="countdown-section days ">
 
-                                                <span class="countdown-amount d-block">458</span>
+                @endforeach
 
-                                                <span class="countdown-period">days</span>
-                                            </span>
-
-                                            <span class="countdown-section  hours">
-                                                <span class="countdown-amount d-block">08</span>
-                                                <span class="countdown-period">hours</span>
-                                            </span>
-
-
-                                            <span class="countdown-section mins "><span class="countdown-amount d-block">10</span><span class="countdown-period">mins</span></span><span class="countdown-section secs"><span class="countdown-amount  d-block">58</span><span class="countdown-period">secs</span></span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
-
+    @endif
 
 
     <section class="banner mt-4" dir="rtl">

@@ -159,6 +159,9 @@
                         <li class="{{ request()->routeIs('promoCodes.index') ? 'active' : ''  }}">
                             <a href="{{route('promoCodes.index')}}">Promo Codes</a>
                         </li>
+                        <li class="{{ request()->routeIs('dailyOffers.index') ? 'active' : ''  }}">
+                            <a href="{{route('dailyOffers.index')}}">Daily Offers</a>
+                        </li>
                         <li class="{{ request()->routeIs('pcBuildSettings.index') ? 'active' : ''  }}">
                             <a href="{{route('pcBuildSettings.index')}}">PC Build Settings</a>
                         </li>
