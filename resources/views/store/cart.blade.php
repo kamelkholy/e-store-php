@@ -99,12 +99,7 @@
                     </div>
                     <div class="customer-list" style="padding: 0;">
                         <ul class="list-group" style="padding: 0;">
-                            <a href="{{route('builds.index')}}" class="list-group-item list-group-item-action">
-                                My Builds
-                            </a>
-                            <a href="{{route('store.pcBuild')}}" class="list-group-item list-group-item-action">
-                                Build A PC
-                            </a>
+
                         </ul>
                     </div>
                 </div>
@@ -184,7 +179,7 @@
                     <div class="col-md-4">
                         <aside>
                             <div class="summary">
-                                <input placeholder="PROMOCODE" type="text" class="form-control" name="promo_code">
+                                <!-- <input placeholder="PROMOCODE" type="text" class="form-control" name="promo_code"> -->
                                 <div class="summary-total">
                                     <div class="total-title">Total</div>
                                     <div class="total-value final-value" id="basket-total"></div>

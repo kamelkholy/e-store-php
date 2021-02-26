@@ -88,11 +88,11 @@
                             <div>
                                 <h6 class="my-0">{{$product->name}}</h6>
                                 <small class="text-muted">Qty: <span>{{$product->bought_qty}}</span></small>
-                                @if($promoApplied)
+                                <!-- @if($promoApplied)
                                 <div>
                                     <small class="text-muted">Promo Applicable: <span>{{($product->promo_applicable)? 'YES' : 'NO'}}</span></small>
                                 </div>
-                                @endif
+                                @endif -->
                             </div>
                             @if(isset($product->final_price))
                             <span class="text-muted">{{$product->final_price}}</span>
@@ -106,7 +106,7 @@
                             <span>Sub Total</span>
                             <strong>{{$total}}</strong>
                         </li>
-                        @if($promoApplied)
+                        <!-- @if($promoApplied)
                         <li class="list-group-item d-flex justify-content-between bg-light">
                             <div class="text-success ">
                                 <h6 class="my-0 text-white">Promo code</h6>
@@ -114,7 +114,7 @@
                             </div>
                             <span class="text-success">-{{$promoDiscount}}</span>
                         </li>
-                        @endif
+                        @endif -->
                         <li class="list-group-item d-flex justify-content-between bg-dark">
                             <div class="text-info">
                                 <h6 class="my-0 text-white">Shipping</h6>
@@ -131,7 +131,7 @@
                         </li>
                         <li class="list-group-item d-flex justify-content-between">
                             <span>Total</span>
-                            <strong id="total-amount">{{$shipping_fees + $total - $promoDiscount}}</strong>
+                            <strong id="total-amount">{{$shipping_fees + $total}}</strong>
                         </li>
                     </ul>
                     <!-- <form class="card p-2">
@@ -213,9 +213,9 @@
                                 <option value="cash">CASH ON DELIVERY</option>
                             </select>
                         </div>
-                        @if($promoApplied)
+                        <!-- @if($promoApplied)
                         <input name="promo_code" value="{{$promoCode}}" class="d-none" type="text" readonly>
-                        @endif
+                        @endif -->
                         <hr class="mb-4">
                         <button class="btn btn-primary btn-lg btn-block mb-4" style="background: #f36c1e; border: 1px solid #f36c1e;" type="submit">
                             Place Order
