@@ -12,6 +12,46 @@ use App\Exceptions\CategoryHasChildrenException;
 
 class CategoriesController extends Controller
 {
+    protected function getSubCategories($allSubs, $value, $data = NULL)
+    {
+        if (!empty($allSubs[$value['id']])) {
+            $html = '';
+
+            $value['subCategories'] = $allSubs[$value['id']];
+            foreach ($value['subCategories'] as $key => $sub) {
+                $deleteUrl = route("categories.destroy", [$sub["id"]]);
+                $editUrl = route("categories.edit", [$sub["id"]]);
+                $token = csrf_token();
+                $value['subCategories'][$key] = $this->getSubCategories($allSubs, $sub, $data);
+                $expand = count($value['subCategories'][$key]['subCategories']) > 0 ?
+                    '<td class="align-middle">
+                        <a style="cursor: pointer;" onclick="expandSub(' . $sub['id'] . ')"> <i class="fa fa-plus-circle"></i></a>
+                    </td>' :
+                    '<td class="align-middle"></td>';
+                $rowColor = ($sub['level'] > 1) ? 'table-dark' : 'table-secondary';
+                $html .= '
+                <tr class="' . $rowColor . ' sub-' . $value['id'] . '" style="display: none;">
+                ' . $expand . '
+                <td class="align-middle">' . $sub['name'] . '</td>
+                <td class="align-middle">' . $sub['name_ar'] . '</td>
+                <td class="align-middle">' . $sub['sortOrder'] . '</td>
+                <td class="align-middle">
+                <form action="' . $deleteUrl . '" method="POST">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_token" value="' . $token . '" />
+                    <a href="' . $editUrl . '" class="btn-sm btn-secondary" style="padding: .5rem .5rem;"><i class="fa fa-edit"></i></a>
+                    <button type="submit" class="btn-sm btn-danger" style="cursor: pointer;"><i class="fa fa-trash"></i></button>
+                </form>
+            </td>                
+                </tr>';
+                if (isset($value['subCategories'][$key]['html'])) {
+                    $html .=    $value['subCategories'][$key]['html'];
+                }
+            }
+            $value['html'] = $html;
+        }
+        return $value;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -19,29 +59,42 @@ class CategoriesController extends Controller
      */
     function index(Request $request)
     {
-        $allCategories = Category::sortable()->paginate(10)->withQueryString();
-        if ($request->query('search_key')) {
-            $data = (new Category())->search($request->query('search_key'))->sortable()->paginate(10)->withQueryString();
-        } else {
-            $data = $allCategories;
-        }
+        $subCategoires = [];
+        $parents = Category::where('level', 0)->orderBy('sortOrder')->get();
+        $allCategories = Category::all();
         $links = new CategoriesLinker();
-        $categoriesNames = [];
-        $links = $links->getAll();
-        foreach ($links as $key => $value) {
-            if (!isset($categoriesNames[$value->id])) {
-                $categoriesNames[$value->id] = $value->name;
-            }
-            $parentToName = $value->parent;
-            for ($i = 0; $i < $value->level; $i++) {
-                $index = array_search($parentToName, array_column($allCategories->toArray()['data'], 'id'));
-                $parent = $allCategories[$index];
-
-                $parentToName = $parent->parent;
-                $categoriesNames[$value->id] = $parent->name . ' > ' . $categoriesNames[$value->id];
+        $links = $links->getChildren(([]));
+        foreach ($allCategories as $key => $category) {
+            $subCategoires[$category->id] = [];
+            foreach ($links as  $link) {
+                if ($link->parent == $category->id) {
+                    $subCategoires[$category->id][$link->id] = array(
+                        'id' => $link->categoryId,
+                        'name' => $link->name,
+                        'name_ar' => $link->name_ar,
+                        'level' => $link->level,
+                        'sortOrder' => $link->sortOrder,
+                        'subCategories' => []
+                    );
+                }
             }
         }
-        return view('categories.list', ['data' => $data, 'categoriesNames' => $categoriesNames]);
+
+        $final = [];
+        foreach ($parents as $key => $value) {
+            $cat = array(
+                'id' => $value->id,
+                'name' => $value->name,
+                'name_ar' => $value->name_ar,
+                'level' => $value->level,
+                'sortOrder' => $value->sortOrder,
+                'subCategories' => [], 'html' => ''
+            );
+            $cat = $this->getSubCategories($subCategoires, $cat);
+            array_push($final, $cat);
+        }
+        // dd($final);
+        return view('categories.list', ['data' => $final]);
     }
     public function getForStore()
     {
@@ -62,8 +115,27 @@ class CategoriesController extends Controller
      */
     public function create()
     {
-        $cats = Category::all();
-        return view('categories.create', compact('cats'));
+        $subCategoires = [];
+        $cats = Category::where('level', 0)->orderBy('sortOrder')->get();
+        $allCategories = Category::all();
+        $links = new CategoriesLinker();
+        $links = $links->getChildren(([]));
+        foreach ($allCategories as $key => $category) {
+            $subCategoires[$category->id] = [];
+            foreach ($links as  $link) {
+                if ($link->parent == $category->id) {
+                    $subCategoires[$category->id][$link->id] = array(
+                        'id' => $link->categoryId,
+                        'name' => $link->name,
+                        'name_ar' => $link->name_ar,
+                        'level' => $link->level,
+                        'sortOrder' => $link->sortOrder,
+                        'subCategories' => []
+                    );
+                }
+            }
+        }
+        return view('categories.create', ['cats' => $cats, 'subs' => $subCategoires]);
     }
 
     /**
@@ -83,6 +155,7 @@ class CategoriesController extends Controller
         $form_data = array(
             'name'  => $request->name,
             'name_ar'  => $request->name_ar,
+            'description'  => $request->description,
         );
         if (isset($request->sortOrder)) {
             $form_data['sortOrder'] = $request->sortOrder;
@@ -94,21 +167,28 @@ class CategoriesController extends Controller
             $form_data['image'] = $image;
             $form_data['show_image'] = true;
         }
-        if (!($request->parent == "NULL")) {
-            $parent = Category::findOrFail($request->parent);
+        $actualParent = $request->parent;
+        if (isset($request->lvl_1) && $request->lvl_1 != "NULL") {
+            $actualParent = $request->lvl_1;
+        }
+        if (isset($request->lvl_2) && $request->lvl_2 != "NULL") {
+            $actualParent = $request->lvl_2;
+        }
+        if (!($actualParent == "NULL")) {
+            $parent = Category::findOrFail($actualParent);
             $form_data['level'] = $parent->level + 1;
             $form_data['parent'] = $parent->id;
             $cat = Category::create($form_data);
             $link = array(
-                'parent' => $request->parent,
+                'parent' => $actualParent,
                 'categoryId' => $cat->id,
                 'level' => $parent->level + 1
             );
             CategoriesLinker::create($link);
-            // $links = CategoriesLinker::where('categoryId', $request->parent)->get();
+            // $links = CategoriesLinker::where('categoryId', $actualParent)->get();
             // if ($links->isEmpty()) {
             //     $link = array(
-            //         'parent' => $request->parent,
+            //         'parent' => $actualParent,
             //         'categoryId' => $cat->id,
             //         'level' => $parent->level + 1
             //     );
@@ -116,7 +196,7 @@ class CategoriesController extends Controller
             // } else {
             //     $multiLinks = array();
             //     array_push($multiLinks, array(
-            //         'parent' => $request->parent,
+            //         'parent' => $actualParent,
             //         'categoryId' => $cat->id,
             //         'level' => $parent->level + 1
             //     ));
@@ -171,14 +251,32 @@ class CategoriesController extends Controller
 
         $excludedCategories = array();
         array_push($excludedCategories, $id);
-        if ($data[0]->parent != NULL) {
-            array_push($excludedCategories, $data[0]->parent);
-        }
         foreach ($links as $key => $value) {
             array_push($excludedCategories, $value->categoryId);
         }
-        $cats = Category::whereNotIn('id', ($excludedCategories))->get();
-        return view('categories.edit', ['data' => $data, 'cats' => $cats]);
+        $subCategoires = [];
+        $cats = Category::where('level', 0)->whereNotIn('id', ($excludedCategories))->orderBy('sortOrder')->get();
+        $allCategories = Category::all();
+        $links = new CategoriesLinker();
+        $links = $links->getChildren(([]));
+        foreach ($allCategories as $key => $category) {
+            $subCategoires[$category->id] = [];
+            foreach ($links as  $link) {
+                if ($link->parent == $category->id) {
+                    if (!in_array($link->categoryId, $excludedCategories)) {
+                        $subCategoires[$category->id][$link->id] = array(
+                            'id' => $link->categoryId,
+                            'name' => $link->name,
+                            'name_ar' => $link->name_ar,
+                            'level' => $link->level,
+                            'sortOrder' => $link->sortOrder,
+                            'subCategories' => []
+                        );
+                    }
+                }
+            }
+        }
+        return view('categories.edit', ['data' => $data, 'cats' => $cats, 'subs' => $subCategoires]);
     }
 
     /**
@@ -199,6 +297,7 @@ class CategoriesController extends Controller
         $category = Category::findOrFail($id);
         $category->name = $request->name;
         $category->name_ar = $request->name_ar;
+        $category->description = $request->description;
         if (isset($request->sortOrder)) {
             $category->sortOrder = $request->sortOrder;
         }
@@ -209,26 +308,54 @@ class CategoriesController extends Controller
             Response::make($image->encode('jpeg'));
             $category->image = $image;
         }
-        if (($request->parent == "NULL")) {
-            CategoriesLinker::where('parent', $category->parent)->delete();
-            $category['level'] = 0;
-            $category['parent'] = NULL;
-        } else if (!($request->parent == $category->parent)) {
-            $parent = Category::findOrFail($request->parent);
-            CategoriesLinker::where('parent', $category->parent)->delete();
-            $category['level'] = $parent->level + 1;
-            $category['parent'] = $parent->id;
-            $link = array(
-                'parent' => $request->parent,
-                'categoryId' => $category->id,
-                'level' => $parent->level + 1
-            );
-            CategoriesLinker::create($link);
+        if (isset($request->parent)) {
+            $actualParent = $request->parent;
+            if (isset($request->lvl_1) && $request->lvl_1 != "NULL") {
+                $actualParent = $request->lvl_1;
+            }
+            if (isset($request->lvl_2) && $request->lvl_2 != "NULL") {
+                $actualParent = $request->lvl_2;
+            }
+            if (($actualParent == "NULL")) {
+                CategoriesLinker::where('categoryId', $category->id)->delete();
+                $category['level'] = 0;
+                $category['parent'] = NULL;
+                $this->fixChildren($category->id, $category['level']);
+            } else if (!($actualParent == $category->parent)) {
+                if ($actualParent == $id) {
+                    return redirect()->back()->withErrors(["message" => "Can't Set Parent As Self"]);
+                }
+                $parent = Category::findOrFail($actualParent);
+                CategoriesLinker::where('categoryId', $category->id)->delete();
+                $category['level'] = $parent->level + 1;
+                $category['parent'] = $parent->id;
+                $this->fixChildren($category->id, $category['level']);
+                $link = array(
+                    'parent' => $actualParent,
+                    'categoryId' => $category->id,
+                    'level' => $parent->level + 1
+                );
+                CategoriesLinker::create($link);
+            }
         }
         $category->save();
-        return redirect('/categories')->with('success', 'Category Updated Successfully');
+        return redirect()->route('categories.index')->with('success', 'Category Updated Successfully');
     }
 
+    protected function fixChildren($parent, $level)
+    {
+        $parents = [];
+        array_push($parents, $parent);
+        $links = CategoriesLinker::where('parent', $parent);
+        $linksData = $links->get();
+        foreach ($linksData as $key => $value) {
+            $lvl2Links = CategoriesLinker::where('parent', $value->categoryId);
+            $lvl2Links->update(['level' => $level + 1]);
+            Category::whereIn('id', array_column($lvl2Links->get()->toArray(), 'categoryId'))->update(['level' => $level + 1]);
+        }
+        $links->update(['level' => $level + 1]);
+        Category::whereIn('id', array_column($linksData->toArray(), 'categoryId'))->update(['level' => $level + 1]);
+    }
     /**
      * Remove the specified resource from storage.
      *
@@ -243,6 +370,6 @@ class CategoriesController extends Controller
             throw new CategoryHasChildrenException('Test');
         }
         $category->delete();
-        return redirect('/categories')->with('success', 'Category Deleted Successfully');
+        return redirect()->route('categories.index')->with('success', 'Category Deleted Successfully');
     }
 }

@@ -113,7 +113,7 @@ class SlidersController extends Controller
         }
 
         $slider->save();
-        return redirect('/sliders')->with('success', 'Slider Updated Successfully');
+        return redirect()->route('sliders.index')->with('success', 'Slider Updated Successfully');
     }
 
     /**
@@ -127,6 +127,6 @@ class SlidersController extends Controller
         $slider = Slider::findOrFail($id);
 
         $slider->delete();
-        return redirect('/sliders')->with('success', 'Slider Updated Successfully');
+        return redirect()->route('sliders.index')->with('success', 'Slider Updated Successfully');
     }
 }

@@ -32,6 +32,6 @@ class StoreLoginController extends Controller
         Auth::guard('store')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/login');
+        return redirect()->route('login');
     }
 }

@@ -4,7 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>labtop</title>
+    @isset($description)
+    <meta name="description" content="{{$description}}" />
+    @endisset
+
+    <title>{{isset($storeSettings->store_name)?$storeSettings->store_name:'E-Store'}}</title>
+    @if(isset($storeSettings->store_logo))
+    <link rel="icon" href="{{route('storeSettings.show', [$storeSettings->id])}}">
+    @else
+    <link rel="icon" href="{{asset('img/placeholder.png')}}">
+    @endif
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
@@ -52,7 +61,7 @@
         <div class="container " style="display: flex;
         flex-flow: row;">
 
-            <a class="navbar-brand" href="{{route('store')}}">CNT</a>
+            <a class="navbar-brand" href="{{route('store')}}">{{isset($storeSettings->store_name)?$storeSettings->store_name:'E-Store'}}</a>
 
 
             <div class=" navbar-collapse">
@@ -327,21 +336,20 @@
             <div class="row justify-content-between">
                 <div class="col-md-3">
                     <ul class="footer-contact">
-                        <h2>C.N.T</h2>
+                        <h2>{{isset($storeSettings->store_name)?$storeSettings->store_name:'E-Store'}}</h2>
                         <li>
                             <i class="fas fa-map-marked-alt"></i>
                             <span>
-                                San Luis Potosí, Centro Historico, 78000 San Luis Potosí, SPL, Mexico
+                                {{$storeSettings->address}}
                             </span>
                         </li>
                         <li>
                             <i class="fas fa-headphones-alt"></i>
-                            <span>(+0214)0 315 215 - </span>
-                            <span>(+0214)0 315 215 </span>
+                            <span>{{$storeSettings->phone}}</span>
                         </li>
                         <li>
                             <i class="fas fa-envelope-open-text"></i>
-                            <a href="tel:Contact@Wpthemego.Com">Contact@Wpthemego.Com</a>
+                            <a href="{{$storeSettings->email}}">{{$storeSettings->email}}</a>
                         </li>
                         <li>
                             <i class="far fa-clock"></i>

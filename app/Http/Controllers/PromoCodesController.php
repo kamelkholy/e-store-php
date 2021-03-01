@@ -237,7 +237,7 @@ class PromoCodesController extends Controller
         $promoCode->products = $products;
         $promoCode->categories = $categories;
         $promoCode->save();
-        return redirect('/promoCodes')->with('success', 'PromoCode Updated Successfully');
+        return redirect()->route('promoCodes.index')->with('success', 'PromoCode Updated Successfully');
     }
 
     /**
@@ -250,6 +250,6 @@ class PromoCodesController extends Controller
     {
         $promoCode = PromoCode::findOrFail($id);
         $promoCode->delete();
-        return redirect('/promoCodes')->with('success', 'PromoCode Updated Successfully');
+        return redirect()->route('promoCodes.index')->with('success', 'PromoCode Updated Successfully');
     }
 }

@@ -16,7 +16,7 @@ class Category extends Model
         'name_ar',
         'sortOrder',
     ];
-    protected $fillable = ['name', 'name_ar', 'sortOrder', 'image', 'show_image', 'level', 'parent'];
+    protected $fillable = ['name', 'description', 'name_ar', 'sortOrder', 'image', 'show_image', 'level', 'parent'];
     public function getCategoryWithParent($id)
     {
         $category = DB::table('categories as c1')

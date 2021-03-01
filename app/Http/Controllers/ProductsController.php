@@ -277,7 +277,7 @@ class ProductsController extends Controller
             ProductImages::insert($dataImages);
         }
         $product->save();
-        return redirect('/products')->with('success', 'Product Updated Successfully');
+        return redirect()->route('products.index')->with('success', 'Product Updated Successfully');
     }
 
     /**
@@ -290,6 +290,6 @@ class ProductsController extends Controller
     {
         $product = Product::findOrFail($id);
         $product->delete();
-        return redirect('/products')->with('success', 'Product Updated Successfully');
+        return redirect()->route('products.index')->with('success', 'Product Updated Successfully');
     }
 }

@@ -120,7 +120,7 @@ class BrandsController extends Controller
         }
 
         $brand->save();
-        return redirect('/brands')->with('success', 'Brand Updated Successfully');
+        return redirect()->route('brands.index')->with('success', 'Brand Updated Successfully');
     }
 
     /**
@@ -134,6 +134,6 @@ class BrandsController extends Controller
         $brand = Brand::findOrFail($id);
 
         $brand->delete();
-        return redirect('/brands')->with('success', 'Brand Updated Successfully');
+        return redirect()->route('brands.index')->with('success', 'Brand Updated Successfully');
     }
 }

@@ -117,7 +117,7 @@ class FeaturedImagesController extends Controller
         }
 
         $featuredImage->save();
-        return redirect('/featuredImages')->with('success', 'FeaturedImage Updated Successfully');
+        return redirect()->route('featuredImages.index')->with('success', 'FeaturedImage Updated Successfully');
     }
 
     /**
@@ -131,6 +131,6 @@ class FeaturedImagesController extends Controller
         $featuredImage = FeaturedImage::findOrFail($id);
 
         $featuredImage->delete();
-        return redirect('/featuredImages')->with('success', 'FeaturedImage Updated Successfully');
+        return redirect()->route('featuredImages.index')->with('success', 'FeaturedImage Updated Successfully');
     }
 }

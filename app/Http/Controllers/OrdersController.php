@@ -85,7 +85,7 @@ class OrdersController extends Controller
         $order = Order::findOrFail($id);
         $order->staff_notes = $request->staff_notes;
         $order->save();
-        return redirect('/orders')->with('success', 'Order Updated Successfully');
+        return redirect()->route('orders.index')->with('success', 'Order Updated Successfully');
     }
 
     /**
@@ -98,7 +98,7 @@ class OrdersController extends Controller
     {
         // $order = Order::findOrFail($id);
         // $order->delete();
-        // return redirect('/orders')->with('success', 'Order Updated Successfully');
+        // return redirect()->route('orders.index')->with('success', 'Order Updated Successfully');
     }
     public function changeStatus(Request $request, $id)
     {
@@ -134,6 +134,6 @@ class OrdersController extends Controller
             'message' => $request->message,
         );
         OrderStatus::create($orderStatusData);
-        return redirect('/orders')->with('success', 'Order Updated Successfully');
+        return redirect()->route('orders.index')->with('success', 'Order Updated Successfully');
     }
 }

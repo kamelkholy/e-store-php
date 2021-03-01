@@ -141,7 +141,7 @@ class FeaturedCategoriesController extends Controller
         }
 
         $featuredCategory->save();
-        return redirect('/featuredCategories')->with('success', 'FeaturedCategory Updated Successfully');
+        return redirect()->route('featuredCategories.index')->with('success', 'FeaturedCategory Updated Successfully');
     }
 
     /**
@@ -155,6 +155,6 @@ class FeaturedCategoriesController extends Controller
         $featuredCategory = FeaturedCategory::findOrFail($id);
 
         $featuredCategory->delete();
-        return redirect('/featuredCategories')->with('success', 'FeaturedCategory Updated Successfully');
+        return redirect()->route('featuredCategories.index')->with('success', 'FeaturedCategory Updated Successfully');
     }
 }

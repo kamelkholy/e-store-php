@@ -98,7 +98,7 @@ class UsersController extends Controller
             $user->password = Hash::make($request->password);
         }
         $user->save();
-        return redirect('/users')->with('success', 'User Updated Successfully');
+        return redirect()->route('users.index')->with('success', 'User Updated Successfully');
     }
 
     /**
@@ -112,6 +112,6 @@ class UsersController extends Controller
         $user = User::findOrFail($id);
 
         $user->delete();
-        return redirect('/users')->with('success', 'User Updated Successfully');
+        return redirect()->route('users.index')->with('success', 'User Updated Successfully');
     }
 }

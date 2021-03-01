@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\StoreSettings;
+use Image;
+use Illuminate\Support\Facades\Response;
 
 class StoreSettingController extends Controller
 {
@@ -48,7 +50,14 @@ class StoreSettingController extends Controller
      */
     public function show($id)
     {
-        //
+        $image = StoreSettings::findOrFail($id);
+        if ($image->store_logo) {
+            $image_file = Image::make($image->store_logo);
+            $response = Response::make($image_file->encode('jpeg'));
+            $response->header('Content-Type', 'image/jpeg');
+            return $response;
+        }
+        return;
     }
 
     /**
@@ -76,16 +85,28 @@ class StoreSettingController extends Controller
             'address'  => 'required',
             'email'  => 'required',
             'phone'  => 'required',
-
         ]);
         $storeSetting = StoreSettings::findOrFail($id);
         $storeSetting->flat_shipping = $request->flat_shipping;
         $storeSetting->address = $request->address;
         $storeSetting->email = $request->email;
         $storeSetting->phone = $request->phone;
-
+        $storeSetting->address = $request->address;
+        $storeSetting->store_name = $request->store_name;
+        $storeSetting->facebook = $request->facebook;
+        $storeSetting->instagram = $request->instagram;
+        $storeSetting->linkedin = $request->linkedin;
+        $storeSetting->whatsapp = $request->whatsapp;
+        $storeSetting->twitter = $request->twitter;
+        $storeSetting->youtube = $request->youtube;
+        if (isset($request->store_logo)) {
+            $image_file = $request->store_logo;
+            $image = Image::make($image_file);
+            Response::make($image->encode('jpeg'));
+            $storeSetting->store_logo = $image;
+        }
         $storeSetting->save();
-        return redirect('/storeSettings')->with('success', 'StoreSettings Updated Successfully');
+        return redirect()->route('storeSettings.index')->with('success', 'StoreSettings Updated Successfully');
     }
 
     /**

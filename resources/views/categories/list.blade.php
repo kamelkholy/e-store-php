@@ -14,10 +14,7 @@
                         <div class="col pl-0">
                             <a href="{{route('categories.create')}}" class="btn btn-primary"> Add New</a>
                         </div>
-                        <form action="{{route('categories.index')}}" class="form-inline my-2 my-lg-0">
-                            <input name="search_key" class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                        </form>
+
                     </div>
                 </div>
                 @if($errors->any())
@@ -47,63 +44,50 @@
                             </tr>
                         </thead>
                         <tbody class="text-center">
-                            @if ($data->count() == 0)
+                            @if (count($data) == 0)
                             <tr>
                                 <td colspan="5">No Data to display.</td>
                             </tr>
                             @endif
                             @foreach($data as $row)
+                            <?php $id = $row['id'] ?>
                             <tr>
                                 <td class="align-middle">
-                                    @if(isset($row->image))
-                                    <img src="{{route('categories.show', [$row->id])}}" class="img-thumbnail" width="75" />
+                                    @if(count($row['subCategories'])>0)
+                                    <a style="cursor: pointer;" onclick="expandSub('{{$id}}')"> <i class="fa fa-plus-circle"></i></a>
+                                    @endif
+                                    @if(isset($row['image']))
+                                    <img src="{{route('categories.show', [$row['id']])}}" class="img-thumbnail" width="75" />
                                     @else
                                     <img src="{{asset('img/placeholder.png')}}" class="img-thumbnail" width="75" />
                                     @endif
                                 </td>
+                                <td class="align-middle">{{$row['name']}}</td>
+                                <td class="align-middle">{{ $row['name_ar'] }}</td>
+                                <td class="align-middle">{{ $row['sortOrder'] }}</td>
                                 <td class="align-middle">
-                                    @if($row->level == 0)
-                                    {{$row->name}}
-                                    @else
-                                    {{ $categoriesNames[$row->id] }}
-                                    @endif
-                                </td>
-                                <td class="align-middle">{{ $row->name_ar }}</td>
-                                <td class="align-middle">{{ $row->sortOrder }}</td>
-                                <td class="align-middle">
-                                    <form action="{{route('categories.destroy', [$row->id])}}" method="POST">
+                                    <form action="{{route('categories.destroy', [$row['id']])}}" method="POST">
                                         @csrf
                                         {{ method_field('DELETE') }}
-                                        <a href="{{route('categories.edit', [$row->id])}}" class="btn-sm btn-secondary" style="padding: .5rem .5rem;"><i class="fa fa-edit"></i></a>
+                                        <a href="{{route('categories.edit', [$row['id']])}}" class="btn-sm btn-secondary" style="padding: .5rem .5rem;"><i class="fa fa-edit"></i></a>
                                         <button type="submit" class="btn-sm btn-danger" style="cursor: pointer;"><i class="fa fa-trash"></i></button>
                                     </form>
                                 </td>
                             </tr>
-
+                            {!! $row['html']!!}
                             @endforeach
                         </tbody>
                     </table>
                 </div>
-                <div class="row justify-content-md-center">
 
-                    <nav aria-label="table-pagination">
-                        <ul class="pagination">
-                            <li class="page-item text-center {{$data->currentPage() == 1? 'disabled' :''}}" style="width: 100px;">
-                                <a class="page-link" href="{{$data->previousPageUrl()}}" tabindex="-1">Previous</a>
-                            </li>
-                            @foreach($data->links()->elements[0] as $key=>$element)
-                            <li class="page-item @if($key == $data->currentPage()) active @endif"><a class="page-link" href="{{$element}}">{{$key}}</a></li>
-                            @endforeach
-                            <li class="page-item text-center {{$data->currentPage() == $data->lastPage()? 'disabled' :''}}" style="width: 100px;">
-                                <a class="page-link" href="{{$data->nextPageUrl()}}">Next</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
 
             </div>
         </div>
     </div>
 </div>
-
+<script>
+    function expandSub(id) {
+        $('.sub-' + id).toggle();
+    }
+</script>
 @endsection

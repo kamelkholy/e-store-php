@@ -96,7 +96,7 @@ class CityShippingController extends Controller
         $cityShipping->shipping_fees = $request->shipping_fees;
 
         $cityShipping->save();
-        return redirect('/cityShippings')->with('success', 'CityShipping Updated Successfully');
+        return redirect()->route('cityShippings.index')->with('success', 'CityShipping Updated Successfully');
     }
 
     /**
@@ -109,6 +109,6 @@ class CityShippingController extends Controller
     {
         $cityShipping = CityShipping::findOrFail($id);
         $cityShipping->delete();
-        return redirect('/cityShippings')->with('success', 'CityShipping Updated Successfully');
+        return redirect()->route('cityShippings.index')->with('success', 'CityShipping Updated Successfully');
     }
 }

@@ -103,7 +103,7 @@ class TagsController extends Controller
             $tag->sortOrder = $request->sortOrder;
         }
         $tag->save();
-        return redirect('/tags')->with('success', 'Tag Updated Successfully');
+        return redirect()->route('tags.index')->with('success', 'Tag Updated Successfully');
     }
 
     /**
@@ -116,6 +116,6 @@ class TagsController extends Controller
     {
         $tag = Tag::findOrFail($id);
         $tag->delete();
-        return redirect('/tags')->with('success', 'Tag Updated Successfully');
+        return redirect()->route('tags.index')->with('success', 'Tag Updated Successfully');
     }
 }

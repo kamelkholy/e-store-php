@@ -36,38 +36,41 @@ Route::get('store/products/category/{id}', ['App\Http\Controllers\StoreControlle
 
 
 
-Route::get('/admin', function () {
-    return view('dashboard');
-})->middleware('auth')->name('dashboard');
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
-Route::post('/dashboard/login', ['App\Http\Controllers\LoginController', 'authenticate'])->name('dashboard.login');
+Route::middleware(['settings'])->prefix('admin')->group(function () {
+    Route::get('/', function () {
+        return view('dashboard');
+    })->middleware('auth')->name('dashboard');
+    Route::get('/login', function () {
+        return view('login');
+    })->name('login');
+    Route::post('/login', ['App\Http\Controllers\LoginController', 'authenticate'])->name('dashboard.login');
 
+    Route::resource('users', 'App\Http\Controllers\UsersController')->middleware('auth');
+    Route::resource('customers', 'App\Http\Controllers\CustomersController')->middleware('auth');
+    Route::resource('brands', 'App\Http\Controllers\BrandsController')->except([
+        'show',
+    ])->middleware(['auth']);
+    Route::get('/brands/{id}', ['App\Http\Controllers\BrandsController', 'show'])->name('brands.show');
+    Route::resource('featuredCategories', 'App\Http\Controllers\FeaturedCategoriesController')->middleware('auth');
+    Route::resource('sliders', 'App\Http\Controllers\SlidersController')->middleware('auth');
+    Route::resource('featuredImages', 'App\Http\Controllers\FeaturedImagesController')->middleware('auth');
+    Route::resource('tags', 'App\Http\Controllers\TagsController')->middleware('auth');
+    Route::resource('orders', 'App\Http\Controllers\OrdersController')->middleware('auth');
+    Route::resource('products', 'App\Http\Controllers\ProductsController')->middleware(['auth']);
+    Route::resource('categories', 'App\Http\Controllers\CategoriesController')->except([
+        'show',
+    ])->middleware(['auth']);
+    Route::get('/categories/{id}', ['App\Http\Controllers\CategoriesController', 'show'])->name('categories.show');
+    Route::resource('types', 'App\Http\Controllers\TypeController')->middleware('auth');
+    Route::resource('cityShippings', 'App\Http\Controllers\CityShippingController')->middleware('auth');
+    Route::resource('storeSettings', 'App\Http\Controllers\StoreSettingController')->except([
+        'show',
+    ])->middleware(['auth']);
+    Route::get('/storeSettings/{id}', ['App\Http\Controllers\StoreSettingController', 'show'])->name('storeSettings.show');
+    // Route::resource('pcBuildSettings', 'App\Http\Controllers\PcBuildSettingController')->middleware('auth');
+    // Route::resource('promoCodes', 'App\Http\Controllers\PromoCodesController')->middleware('auth');
+    Route::resource('dailyOffers', 'App\Http\Controllers\DailyOffersController')->middleware('auth');
 
-
-Route::resource('users', 'App\Http\Controllers\UsersController')->middleware('auth');
-Route::resource('customers', 'App\Http\Controllers\CustomersController')->middleware('auth');
-Route::resource('brands', 'App\Http\Controllers\BrandsController')->except([
-    'show',
-])->middleware(['auth']);
-Route::get('/brands/{id}', ['App\Http\Controllers\BrandsController', 'show'])->name('brands.show');
-Route::resource('featuredCategories', 'App\Http\Controllers\FeaturedCategoriesController')->middleware('auth');
-Route::resource('sliders', 'App\Http\Controllers\SlidersController')->middleware('auth');
-Route::resource('featuredImages', 'App\Http\Controllers\FeaturedImagesController')->middleware('auth');
-Route::resource('tags', 'App\Http\Controllers\TagsController')->middleware('auth');
-Route::resource('orders', 'App\Http\Controllers\OrdersController')->middleware('auth');
-Route::resource('products', 'App\Http\Controllers\ProductsController')->middleware(['auth']);
-Route::resource('categories', 'App\Http\Controllers\CategoriesController')->except([
-    'show',
-])->middleware(['auth']);
-Route::get('/categories/{id}', ['App\Http\Controllers\CategoriesController', 'show'])->name('categories.show');
-Route::resource('types', 'App\Http\Controllers\TypeController')->middleware('auth');
-Route::resource('cityShippings', 'App\Http\Controllers\CityShippingController')->middleware('auth');
-Route::resource('storeSettings', 'App\Http\Controllers\StoreSettingController')->middleware('auth');
-// Route::resource('pcBuildSettings', 'App\Http\Controllers\PcBuildSettingController')->middleware('auth');
-// Route::resource('promoCodes', 'App\Http\Controllers\PromoCodesController')->middleware('auth');
-Route::resource('dailyOffers', 'App\Http\Controllers\DailyOffersController')->middleware('auth');
-
-Route::post('/orders/{id}/change-status', ['App\Http\Controllers\OrdersController', 'changeStatus'])->middleware('auth')->name('orders.changeStatus');
-Route::get('/featuredCategories/{id}/products', ['App\Http\Controllers\FeaturedCategoriesController', 'getProducts'])->middleware('auth')->name('featuredCategories.getProducts');
+    Route::post('/orders/{id}/change-status', ['App\Http\Controllers\OrdersController', 'changeStatus'])->middleware('auth')->name('orders.changeStatus');
+    Route::get('/featuredCategories/{id}/products', ['App\Http\Controllers\FeaturedCategoriesController', 'getProducts'])->middleware('auth')->name('featuredCategories.getProducts');
+});

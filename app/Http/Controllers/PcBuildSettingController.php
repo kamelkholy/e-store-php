@@ -109,7 +109,7 @@ class PcBuildSettingController extends Controller
         $pcBuildSetting->headphone = $request->headphone;
 
         $pcBuildSetting->save();
-        return redirect('/pcBuildSettings')->with('success', 'PcBuildSettings Updated Successfully');
+        return redirect()->route('pcBuildSettings.index')->with('success', 'PcBuildSettings Updated Successfully');
     }
 
     /**

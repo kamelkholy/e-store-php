@@ -119,7 +119,7 @@ class TypeController extends Controller
             $type->sortOrder = $request->sortOrder;
         }
         $type->save();
-        return redirect('/types')->with('success', 'Type Updated Successfully');
+        return redirect()->route('types.index')->with('success', 'Type Updated Successfully');
     }
 
     /**
@@ -132,6 +132,6 @@ class TypeController extends Controller
     {
         $type = Type::findOrFail($id);
         $type->delete();
-        return redirect('/types')->with('success', 'Type Deleted Successfully');
+        return redirect()->route('types.index')->with('success', 'Type Deleted Successfully');
     }
 }

@@ -98,7 +98,7 @@ class CustomersController extends Controller
             $customer->password = Hash::make($request->password);
         }
         $customer->save();
-        return redirect('/customers')->with('success', 'Customer Updated Successfully');
+        return redirect()->route('customers.index')->with('success', 'Customer Updated Successfully');
     }
 
     /**
@@ -112,6 +112,6 @@ class CustomersController extends Controller
         $customer = Customer::findOrFail($id);
 
         $customer->delete();
-        return redirect('/customers')->with('success', 'Customer Updated Successfully');
+        return redirect()->route('customers.index')->with('success', 'Customer Updated Successfully');
     }
 }

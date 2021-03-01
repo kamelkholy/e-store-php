@@ -100,12 +100,13 @@ class StoreController extends Controller
             }
             $value->products = $products;
         }
+        $settings = new StoreSettings();
+        $settings = $settings->findOrCreate();
 
-        return view('store', ['featuredCategories' => $featuredCategories, 'dailyOffer' => $dailyOffer, 'sliders' => $sliders, 'featuredImages' => $featuredImages, 'brands' => $brands, 'parents' => $parentsData, 'children' => $children]);
+        return view('store', ['storeSettings' => $settings, 'featuredCategories' => $featuredCategories, 'dailyOffer' => $dailyOffer, 'sliders' => $sliders, 'featuredImages' => $featuredImages, 'brands' => $brands, 'parents' => $parentsData, 'children' => $children]);
     }
     function cart()
     {
-        $brands = Brand::all();
         $parentsData = Category::where('level', 0)->orderBy('sortOrder')->get();
         $parents = array();
         foreach ($parentsData as $key => $value) {
@@ -113,8 +114,10 @@ class StoreController extends Controller
         }
         $children = new CategoriesLinker();
         $children = $children->getChildren(($parents));
+        $settings = new StoreSettings();
+        $settings = $settings->findOrCreate();
 
-        return view('store.cart', ['brands' => $brands, 'parents' => $parentsData, 'children' => $children]);
+        return view('store.cart', ['storeSettings' => $settings, 'parents' => $parentsData, 'children' => $children]);
     }
     function checkout(Request $request)
     {
@@ -205,6 +208,7 @@ class StoreController extends Controller
         }
         $cityShippings = CityShipping::all();
         return view('store.checkout', [
+            'storeSettings' => $settings,
             'products' => $products,
             'cityShippings' => $cityShippings,
             'shipping_fees' => $shippingFees,
@@ -373,7 +377,6 @@ class StoreController extends Controller
     function compare()
     {
 
-        $brands = Brand::all();
         $parentsData = Category::where('level', 0)->orderBy('sortOrder')->get();
         $parents = array();
         foreach ($parentsData as $key => $value) {
@@ -381,13 +384,13 @@ class StoreController extends Controller
         }
         $children = new CategoriesLinker();
         $children = $children->getChildren(($parents));
-
-        return view('store.compare', ['brands' => $brands, 'parents' => $parentsData, 'children' => $children]);
+        $settings = new StoreSettings();
+        $settings = $settings->findOrCreate();
+        return view('store.compare', ['storeSettings' => $settings, 'parents' => $parentsData, 'children' => $children]);
     }
     function pcBuild()
     {
 
-        $brands = Brand::all();
         $parentsData = Category::where('level', 0)->orderBy('sortOrder')->get();
         $parents = array();
         foreach ($parentsData as $key => $value) {
@@ -421,10 +424,12 @@ class StoreController extends Controller
             $index = array_search($value->category, array_column($components, 'category'));
             array_push($components[$value->category], $value);
         }
+        $settings = new StoreSettings();
+        $settings = $settings->findOrCreate();
         return view('store.pcBuild', [
+            'storeSettings' => $settings,
             'components' => $components,
             'pcBuildSettings' => $pcBuildSettings,
-            'brands' => $brands,
             'parents' => $parentsData,
             'children' => $children
         ]);
@@ -519,89 +524,16 @@ class StoreController extends Controller
         }
         $children = new CategoriesLinker();
         $children = $children->getChildren(($parents));
+        $settings = new StoreSettings();
+        $settings = $settings->findOrCreate();
         return view('store.products', [
+            'storeSettings' => $settings,
             'products' => $products,
             'parents' => $parentsData,
             'children' => $children,
             'existingBrands' => $existingBrands,
             'existingCategories' => $existingCategories,
         ]);
-    }
-    function aproduct($id)
-    {
-        $product = Product::findOrFail($id);
-        $product->specifications = json_decode($product->specifications, true);
-        $product->final_price = $product->price - ($product->price * $product->discount) / 100;
-
-        $typeSepcs = json_decode($product->typeObj->specifications,);
-        $images = ProductImages::where('product', $id)->select('id', 'product')->get();
-
-        $parentsData = Category::where('level', 0)->orderBy('sortOrder')->get();
-        $parents = array();
-        foreach ($parentsData as $key => $value) {
-            array_push($parents, $value->id);
-        }
-        $children = new CategoriesLinker();
-        $children = $children->getChildren(($parents));
-        $tags = ProductTags::where('product', $product->id)->select('tag')->get();
-        $productsByTags = ProductTags::whereIn('tag', $tags)->select('product')->distinct()->get();
-        $relatedProducts = new Product;
-        $relatedProducts = $relatedProducts->getRelatedProducts($product->category, $productsByTags);
-        for ($i = 0; $i < count($relatedProducts); $i++) {
-            if ($relatedProducts[$i]->enable_discount) {
-                $relatedProducts[$i]->final_price = $relatedProducts[$i]->price - ($relatedProducts[$i]->price * $relatedProducts[$i]->discount) / 100;
-            }
-        }
-
-        $now = Carbon::now();
-        $dailyOffers = DailyOffer::whereDate('start_date', '<=', $now)->whereDate('end_date', '>=', $now)->get();
-        $dailyOffer = count($dailyOffers) > 0 ? $dailyOffers[0] : NULL;
-        if ($dailyOffer) {
-
-            $dailyIds = json_decode($dailyOffer->products);
-            $dailyProducts = Product::leftJoin('product_images as pi', function ($q) {
-                $q->on('pi.product', '=', 'products.id')
-                    ->on(
-                        'pi.id',
-                        '=',
-                        DB::raw('(select min(id) from product_images where product = pi.product)')
-                    );
-            })
-                ->whereIn('products.id', $dailyIds)
-                ->select('products.*', 'pi.image', 'pi.id as image_id')
-                ->get();
-            for ($i = 0; $i < count($dailyProducts); $i++) {
-                if ($dailyProducts[$i]->enable_discount) {
-                    $dailyProducts[$i]->final_price = $dailyProducts[$i]->price - ($dailyProducts[$i]->price * $dailyProducts[$i]->discount) / 100;
-                }
-            }
-            $dailyOffer->products = $dailyProducts;
-        }
-        return view('store.aproduct', [
-            'product' => $product,
-            'dailyOffer' => $dailyOffer,
-            'relatedProducts' => $relatedProducts,
-            'images' => $images,
-            'typeSepcs' => $typeSepcs,
-            'parents' => $parentsData,
-            'children' => $children
-        ]);
-    }
-    function getCartProduct($id)
-    {
-        $product = Product::findOrFail($id);
-        $product->final_price = $product->price - ($product->price * $product->discount) / 100;
-        $images = ProductImages::where('product', $id)->select('id', 'product')->get();
-        $product->image_id = $images[0]->id;
-        return $product;
-    }
-    function showProductImage($id)
-    {
-        $image = ProductImages::findOrFail($id);
-        $image_file = Image::make($image->image);
-        $response = Response::make($image_file->encode('jpeg'));
-        $response->header('Content-Type', 'image/jpeg');
-        return $response;
     }
     function productsByCategory(Request $request, $category)
     {
@@ -648,13 +580,98 @@ class StoreController extends Controller
         $children = new CategoriesLinker();
 
         $children = $children->getChildren(($parents));
-
+        $settings = new StoreSettings();
+        $settings = $settings->findOrCreate();
         return view('store.products', [
+            'description' => $cat->description,
+            'storeSettings' => $settings,
             'products' => $products,
             'parents' => $parentsData,
             'children' => $children,
             'existingBrands' => $existingBrands,
             'existingCategories' => $existingCategories,
         ]);
+    }
+    function aproduct($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->specifications = json_decode($product->specifications, true);
+        $product->final_price = $product->price - ($product->price * $product->discount) / 100;
+
+        $typeSepcs = json_decode($product->typeObj->specifications,);
+        $images = ProductImages::where('product', $id)->select('id', 'product')->get();
+
+        $parentsData = Category::where('level', 0)->orderBy('sortOrder')->get();
+        $parents = array();
+        foreach ($parentsData as $key => $value) {
+            array_push($parents, $value->id);
+        }
+        $children = new CategoriesLinker();
+        $children = $children->getChildren(($parents));
+        $tags = ProductTags::join('tags as t', 't.id', '=', 'tag')->where('product', $product->id)->select('tag', 't.name as tag_name')->get();
+        $tagNames = array_column($tags->toArray(), 'tag_name');
+        $metaTags = join(", ", $tagNames);
+        $productsByTags = ProductTags::whereIn('tag', $tags)->select('product')->distinct()->get();
+        $relatedProducts = new Product;
+        $relatedProducts = $relatedProducts->getRelatedProducts($product->category, $productsByTags);
+        for ($i = 0; $i < count($relatedProducts); $i++) {
+            if ($relatedProducts[$i]->enable_discount) {
+                $relatedProducts[$i]->final_price = $relatedProducts[$i]->price - ($relatedProducts[$i]->price * $relatedProducts[$i]->discount) / 100;
+            }
+        }
+
+        $now = Carbon::now();
+        $dailyOffers = DailyOffer::whereDate('start_date', '<=', $now)->whereDate('end_date', '>=', $now)->get();
+        $dailyOffer = count($dailyOffers) > 0 ? $dailyOffers[0] : NULL;
+        if ($dailyOffer) {
+
+            $dailyIds = json_decode($dailyOffer->products);
+            $dailyProducts = Product::leftJoin('product_images as pi', function ($q) {
+                $q->on('pi.product', '=', 'products.id')
+                    ->on(
+                        'pi.id',
+                        '=',
+                        DB::raw('(select min(id) from product_images where product = pi.product)')
+                    );
+            })
+                ->whereIn('products.id', $dailyIds)
+                ->select('products.*', 'pi.image', 'pi.id as image_id')
+                ->get();
+            for ($i = 0; $i < count($dailyProducts); $i++) {
+                if ($dailyProducts[$i]->enable_discount) {
+                    $dailyProducts[$i]->final_price = $dailyProducts[$i]->price - ($dailyProducts[$i]->price * $dailyProducts[$i]->discount) / 100;
+                }
+            }
+            $dailyOffer->products = $dailyProducts;
+        }
+        $settings = new StoreSettings();
+        $settings = $settings->findOrCreate();
+        return view('store.aproduct', [
+            'metaTags' => $metaTags,
+            'storeSettings' => $settings,
+            'product' => $product,
+            'dailyOffer' => $dailyOffer,
+            'relatedProducts' => $relatedProducts,
+            'images' => $images,
+            'typeSepcs' => $typeSepcs,
+            'parents' => $parentsData,
+            'children' => $children
+        ]);
+    }
+    function getCartProduct($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->final_price = $product->price - ($product->price * $product->discount) / 100;
+        $images = ProductImages::where('product', $id)->select('id', 'product')->get();
+        $product->image_id = $images[0]->id;
+        return $product;
+    }
+    function showProductImage($id)
+    {
+        $image = ProductImages::findOrFail($id);
+        $image_file = Image::make($image->image);
+        $response = Response::make($image_file->encode('jpeg'));
+        $response->header('Content-Type', 'image/jpeg');
+        return $response;
     }
 }

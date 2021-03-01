@@ -98,8 +98,13 @@
     <div class="wrapper">
         <!-- Sidebar -->
         <nav id="sidebar">
-            <div class="sidebar-header">
-                <h4>Store Name</h4>
+            <div class="sidebar-header d-flex flex-column align-items-center">
+                <h4>{{isset($storeSettings->store_name)?$storeSettings->store_name:'E-Store'}}</h4>
+                @if(isset($storeSettings->store_logo))
+                <img src="{{route('storeSettings.show', [$storeSettings->id])}}" class="img-thumbnail" width="150" />
+                @else
+                <img src="{{asset('img/placeholder.png')}}" class="img-thumbnail" width="150" />
+                @endif
             </div>
 
             <ul class="list-unstyled components">
@@ -111,22 +116,22 @@
                     <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Store Modules</a>
                     <ul class="collapse list-unstyled" id="homeSubmenu">
                         <li class="{{ request()->routeIs('categories.index') ? 'active' : ''  }}">
-                            <a href=" {{url('/categories')}}">Categories</a>
+                            <a href=" {{route('categories.index')}}">Categories</a>
                         </li>
                         <li class="{{ request()->routeIs('types.index') ? 'active' : ''  }}">
-                            <a href="{{url('/types')}}">Types</a>
+                            <a href="{{route('types.index')}}">Types</a>
                         </li>
                         <li class="{{ request()->routeIs('brands.index') ? 'active' : ''  }}">
-                            <a href=" {{url('/brands')}}">Brands</a>
+                            <a href=" {{route('brands.index')}}">Brands</a>
                         </li>
                         <li class="{{ request()->routeIs('tags.index') ? 'active' : ''  }}">
-                            <a href=" {{url('/tags')}}">Tags</a>
+                            <a href=" {{route('tags.index')}}">Tags</a>
                         </li>
                         <li class="{{ request()->routeIs('products.index') ? 'active' : ''  }}">
-                            <a href=" {{url('/products')}}">Products</a>
+                            <a href=" {{route('products.index')}}">Products</a>
                         </li>
                         <li class="{{ request()->routeIs('orders.index') ? 'active' : ''  }}">
-                            <a href=" {{url('/orders')}}">Orders</a>
+                            <a href=" {{route('orders.index')}}">Orders</a>
                         </li>
                     </ul>
                 </li>

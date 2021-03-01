@@ -119,7 +119,7 @@ class DailyOffersController extends Controller
         $dailyOffer->end_date = $endDate;
         $dailyOffer->products = $products;
         $dailyOffer->save();
-        return redirect('/dailyOffers')->with('success', 'DailyOffer Updated Successfully');
+        return redirect()->route('dailyOffers.index')->with('success', 'DailyOffer Updated Successfully');
     }
 
     /**
@@ -132,6 +132,6 @@ class DailyOffersController extends Controller
     {
         $dailyOffer = DailyOffer::findOrFail($id);
         $dailyOffer->delete();
-        return redirect('/dailyOffers')->with('success', 'DailyOffer Updated Successfully');
+        return redirect()->route('dailyOffers.index')->with('success', 'DailyOffer Updated Successfully');
     }
 }

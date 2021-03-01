@@ -14,7 +14,7 @@ class CategoriesLinker extends Model
         $children = DB::table('categories_linkers as c1')
             ->join('categories as c2', 'c1.categoryId', '=', 'c2.id')
             ->orderBy('c2.sortOrder')
-            ->select('c1.*', 'c2.id as id', 'c2.name as name')
+            ->select('c1.*', 'c2.id as id', 'c2.name as name', 'c2.name_ar as name_ar', 'c2.sortOrder as sortOrder')
             ->get();
         //do whatever you want to do
         return $children;
@@ -35,7 +35,7 @@ class CategoriesLinker extends Model
         $children = DB::table('categories_linkers as c1')
             ->join('categories as c2', 'c1.categoryId', '=', 'c2.id')
             ->orderBy('c2.sortOrder')
-            ->select('c1.*', 'c2.id as id', 'c2.name as name')
+            ->select('c1.*', 'c2.id as id', 'c2.name as name', 'c2.name_ar as name_ar', 'c2.sortOrder as sortOrder')
             ->get();
         //do whatever you want to do
         return $children;
